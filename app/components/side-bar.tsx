@@ -1,6 +1,6 @@
 import { LayoutDashboard, Package, Store } from "lucide-react";
 import { useNavigate } from "react-router";
-import { logout } from "~/services/auth";
+import { logout } from "~/services/auth-service";
 import Logo from "./logo";
 import SideBarNavItem from "./side-bar-nav-item";
 import { Button } from "./ui/button";

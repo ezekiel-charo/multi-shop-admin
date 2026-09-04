@@ -24,7 +24,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "~/components/ui/input-group";
-import { getToken, login, setToken } from "~/services/auth";
+import { getToken, login, setToken } from "~/services/auth-service";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Invalid email format" }),
