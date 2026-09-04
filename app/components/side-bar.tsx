@@ -1,11 +1,16 @@
 import { LayoutDashboard, Package, Store } from "lucide-react";
+import { useNavigate } from "react-router";
+import { logout } from "~/services/auth";
 import Logo from "./logo";
 import SideBarNavItem from "./side-bar-nav-item";
+import { Button } from "./ui/button";
 
 export default function SideBar() {
+  const navigate = useNavigate();
+
   return (
     <>
-      <div className="h-screen bg-[#f4f8fb] w-60 border-r border-r-[#dde2e0]">
+      <div className="h-screen relative bg-[#f4f8fb] w-60 border-r border-r-[#dde2e0]">
         <div className="my-4 p-6">
           <div className="w-fit">
             <Logo />
@@ -14,7 +19,8 @@ export default function SideBar() {
             </div>
           </div>
         </div>
-        <nav className="flex flex-col gap-1 px-2">
+
+        <nav aria-label="Side navigation" className="flex flex-col gap-1 px-2">
           <SideBarNavItem to="/dashboard">
             <LayoutDashboard /> Dashboard
           </SideBarNavItem>
@@ -26,6 +32,19 @@ export default function SideBar() {
             Products
           </SideBarNavItem>
         </nav>
+
+        <div className="absolute bottom-4 right-0 left-0 p-4">
+          <Button
+            onClick={async () => {
+              await logout();
+              navigate("/login");
+            }}
+            variant="destructive"
+            className="w-full h-12"
+          >
+            Log out
+          </Button>
+        </div>
       </div>
     </>
   );
