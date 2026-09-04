@@ -10,7 +10,7 @@ export default function SideBar() {
 
   return (
     <>
-      <div className="h-screen relative bg-[#f4f8fb] w-60 border-r border-r-[#dde2e0]">
+      <div className="hidden lg:block h-screen relative bg-[#f4f8fb] min-w-60 border-r border-r-[#dde2e0]">
         <div className="my-4 p-6">
           <div className="w-fit">
             <Logo />

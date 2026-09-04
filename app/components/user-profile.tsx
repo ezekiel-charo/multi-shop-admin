@@ -9,8 +9,7 @@ export default function UserProfile() {
   };
   return (
     <>
-      <div className="flex items-center gap-2 py-4 px-6">
-        <CircleUserRound className="size-10 text-gray-700" />
+      <div className="flex items-center gap-2 py-4 lg:px-6">
         <div>
           <div aria-label="User name" className="font-bold text-sm">
             {user.name}
@@ -19,6 +18,7 @@ export default function UserProfile() {
             {user.roleName}
           </div>
         </div>
+        <CircleUserRound className="size-10 text-gray-700" />
       </div>
     </>
   );
