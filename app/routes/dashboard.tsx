@@ -1,3 +1,45 @@
+import { useQuery } from "@tanstack/react-query";
+import DashboardStatCard from "~/components/dashboard-stat-card";
+import { getDashboardData } from "~/services/dashboard-service";
+
 export default function Dashboard() {
-  return <>Dashboard</>;
+  const { data } = useQuery({
+    queryFn: getDashboardData,
+    queryKey: ["dashboard-data"],
+  });
+
+  return (
+    <>
+      <title>Dashboard</title>
+      <meta name="description" content="MultiShop Admin Panel dashboard" />
+      {data && (
+        <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <DashboardStatCard
+            statTitle="Total Shops"
+            statValue={data.totalShops}
+          />
+          <DashboardStatCard
+            statTitle="Total Products"
+            statValue={data.totalProducts}
+          />
+          <DashboardStatCard
+            statTitle="Total Inventory Value"
+            statValue={data.totalInventoryValue}
+          />
+          <DashboardStatCard
+            statTitle="Total Stock"
+            statValue={data.totalStock}
+          />
+          <DashboardStatCard
+            statTitle="Low Stock Products"
+            statValue={data.numLowStockProducts}
+          />
+          <DashboardStatCard
+            statTitle="Out of Stock Products"
+            statValue={data.numOutOfStockProducts}
+          />
+        </div>
+      )}
+    </>
+  );
 }
