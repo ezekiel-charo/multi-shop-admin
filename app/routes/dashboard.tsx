@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import DashboardSkeleton from "~/components/dashboard-skeleton";
 import DashboardStatCard from "~/components/dashboard-stat-card";
+import LoadingError from "~/components/loading-error";
 import ProductStockStatusChart from "~/components/product-stock-status-chart";
 import { TopFiveShopsChart } from "~/components/top-five-shops-chart";
 import { getDashboardData } from "~/services/dashboard-service";
 
 export default function Dashboard() {
-  const { data } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryFn: getDashboardData,
     queryKey: ["dashboard-data"],
   });
@@ -14,9 +16,13 @@ export default function Dashboard() {
     <>
       <title>Dashboard</title>
       <meta name="description" content="MultiShop Admin Panel dashboard" />
+
+      {isPending && <DashboardSkeleton />}
+      {isError && <LoadingError error={error} retry={refetch} />}
+
       {data && (
         <>
-          <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-12">
             <DashboardStatCard
               statTitle="Total Shops"
               statValue={data.totalShops}
