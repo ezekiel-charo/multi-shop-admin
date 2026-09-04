@@ -29,6 +29,10 @@ export function TopFiveShopsChart({ topShops }: TopFiveShopsChartProps) {
 
   return (
     <div className="border border-gray-100 bg-gray-50 rounded-lg p-3">
+      <div className="font-semibold text-base text-gray-800">Top 5 Shops</div>
+      <div className="text-gray-500 text-xs">
+        Top shops by total inventory value
+      </div>
       <ChartContainer config={chartConfig} className="mx-auto w-full">
         <PieChart>
           <ChartTooltip

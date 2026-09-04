@@ -18,7 +18,7 @@ export default function MainLayout() {
         <SideBar />
         <div className="flex flex-col grow">
           <TopBar />
-          <main className="inline-block p-4 overflow-y-auto grow">
+          <main className="inline-block p-4 overflow-y-auto grow pb-24">
             <Outlet />
           </main>
         </div>

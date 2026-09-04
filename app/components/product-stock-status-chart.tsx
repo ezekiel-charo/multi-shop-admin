@@ -31,9 +31,12 @@ export default function ProductStockStatusChart({
   ];
 
   return (
-    <div className="border border-gray-200 bg-gray-50 rounded-lg p-3">
+    <div className="border border-gray-100 bg-gray-50 rounded-lg p-3">
       <div className="font-semibold text-base text-gray-800">
         Product Stock Status
+      </div>
+      <div className="text-gray-500 text-xs">
+        Number of product units per stock status
       </div>
       <ChartContainer config={chartConfig}>
         <BarChart
