@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import DashboardStatCard from "~/components/dashboard-stat-card";
 import ProductStockStatusChart from "~/components/product-stock-status-chart";
+import { TopFiveShopsChart } from "~/components/top-five-shops-chart";
 import { getDashboardData } from "~/services/dashboard-service";
 
 export default function Dashboard() {
@@ -41,8 +42,9 @@ export default function Dashboard() {
               statValue={data.numOutOfStockProducts}
             />
           </div>
-          <div className="grid grid-cols-2">
+          <div className="grid  lg:grid-cols-2 gap-3">
             <ProductStockStatusChart data={data} />
+            <TopFiveShopsChart topShops={data.topShops} />
           </div>
         </>
       )}
