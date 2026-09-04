@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import Logo from "~/components/logo";
 import {
   Field,
@@ -24,7 +24,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "~/components/ui/input-group";
-import { login } from "~/services/auth";
+import { getToken, login, setToken } from "~/services/auth";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Invalid email format" }),
@@ -32,6 +32,7 @@ const loginFormSchema = z.object({
 });
 
 export default function Login() {
+  const token = getToken();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,11 +46,17 @@ export default function Login() {
 
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: () => {
-      // navigate to the dashboard
+    onSuccess: (loginResponse) => {
+      // Save the token and navigate to the dashboard
+      setToken(loginResponse.token);
       navigate("/dashboard");
     },
   });
+
+  if (token) {
+    // Redirect to dashboard page
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <>

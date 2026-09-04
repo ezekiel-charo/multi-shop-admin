@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "~/types/constants";
+import { BASE_URL, TOKEN_KEY } from "~/types/constants";
 import type { LoginCredentials } from "~/types/login-credentials";
 import type { LoginResponse } from "~/types/login-response";
 
@@ -8,14 +8,14 @@ const authApi = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-const demoUsers: Record<string, string> = {
-  "admin@gmail.com": "adminpass",
-  "viewer@gmail.com": "viewerpass",
-};
-
 export async function login(
   credentials: LoginCredentials,
 ): Promise<LoginResponse> {
+  const demoUsers: Record<string, string> = {
+    "admin@gmail.com": "adminpass",
+    "viewer@gmail.com": "viewerpass",
+  };
+
   return new Promise((resolve, reject) => {
     // TODO: Implement proper serverside login
     if (!demoUsers[credentials.email]) {
@@ -31,5 +31,22 @@ export async function login(
 }
 
 export async function logout() {
-  // TODO: Implement
+  // TODO: Send logout request to backend
+  removeToken();
+}
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function removeToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+export function isAuthenticated() {
+  return !!getToken();
 }
