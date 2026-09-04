@@ -1,10 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
+import abstractBg from "~/assets/images/abstract-bg.jpg";
 import { Button } from "~/components/ui/button";
-import abstractBg from "./abstract-bg.jpg";
 
-import { Building2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import Logo from "~/components/logo";
 import {
   Field,
   FieldDescription,
@@ -14,6 +18,13 @@ import {
   FieldSet,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "~/components/ui/input-group";
+import { login } from "~/services/auth";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Invalid email format" }),
@@ -21,6 +32,9 @@ const loginFormSchema = z.object({
 });
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -29,12 +43,18 @@ export default function Login() {
     },
   });
 
-  function onSubmit(loginCredentials: z.infer<typeof loginFormSchema>) {
-    console.log(loginCredentials);
-  }
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      // navigate to the dashboard
+      navigate("/dashboard");
+    },
+  });
 
   return (
     <>
+      <title>MultiShop login</title>
+      <meta name="description" content="Login to MultiShop" />
       <main className="lg:grid lg:grid-cols-2 min-h-screen">
         <section className="bg-black/90 hidden lg:block">
           <img
@@ -45,11 +65,16 @@ export default function Login() {
         </section>
 
         <section className="flex flex-col px-8 lg:px-48 pt-32 bg-[#f6f7f8]">
-          <div className="font-extrabold text-lg mb-12 flex gap-2 text-primary">
-            <Building2 /> MultiShop
+          <div className="mb-8">
+            <Logo />
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
+          <form
+            onSubmit={form.handleSubmit((credentials) => {
+              mutation.mutate(credentials);
+            })}
+            className="w-full"
+          >
             <FieldSet>
               <FieldLegend className="font-bold">Welcome</FieldLegend>
               <FieldDescription>
@@ -84,15 +109,29 @@ export default function Login() {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="login-password">Password</FieldLabel>
-                    <Input
-                      {...field}
-                      type="password"
-                      id="login-password"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Enter your password"
-                      autoComplete="on"
-                      className="h-12"
-                    />
+                    <InputGroup>
+                      <InputGroupInput
+                        {...field}
+                        type={showPassword ? "text" : "password"}
+                        id="login-password"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="Enter your password"
+                        autoComplete="on"
+                        className="h-12"
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          aria-label="Copy"
+                          title="Copy"
+                          size="icon-xs"
+                          onClick={() => {
+                            setShowPassword(!showPassword);
+                          }}
+                        >
+                          {showPassword ? <EyeClosed /> : <Eye />}
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    </InputGroup>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -100,7 +139,13 @@ export default function Login() {
                 )}
               />
 
-              <Button type="submit" className="w-full h-12">
+              {mutation.isError && <FieldError errors={[mutation.error]} />}
+
+              <Button
+                disabled={mutation.isPending}
+                type="submit"
+                className="w-full h-12"
+              >
                 Log in
               </Button>
             </FieldSet>
