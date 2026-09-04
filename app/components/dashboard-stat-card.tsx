@@ -11,7 +11,7 @@ export default function DashboardStatCard({
 }: DashboardStatCardProps) {
   return (
     <>
-      <div className="border border-gray-200 bg-gray-100 rounded-lg p-3">
+      <div className="border border-gray-200 bg-gray-50 rounded-lg p-3">
         <div className="text-xs text-gray-700 mb-1">{statTitle}</div>
         <div className="font-extrabold text-lg text-gray-800">
           {formatNumber(statValue)}
