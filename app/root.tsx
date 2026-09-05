@@ -30,17 +30,7 @@ export const links: Route.LinksFunction = () => [
 ];
 
 // Tanstack query client
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    onError: (error) => {
-      toast.add({
-        title: "Error",
-        description: error.message,
-        type: "error",
-      });
-    },
-  }),
-});
+const queryClient = new QueryClient();
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
