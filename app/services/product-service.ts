@@ -22,6 +22,7 @@ export async function addProduct(product: Partial<Product>): Promise<Product> {
   const response = await api.post("products", {
     ...product,
     createdAt: Date.now(),
+    lastUpdatedAt: Date.now(),
   });
   return mapProductWithDerivedFields(response.data);
 }

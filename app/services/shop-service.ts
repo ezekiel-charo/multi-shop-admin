@@ -20,6 +20,7 @@ export async function addShop(shop: Partial<Shop>): Promise<Shop> {
   const response = await api.post("shops", {
     ...shop,
     createdAt: Date.now(),
+    lastUpdatedAt: Date.now(),
   });
   return mapShopWithDerivedFields(response.data);
 }
