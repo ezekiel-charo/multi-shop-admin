@@ -33,9 +33,10 @@ import { getShops } from "~/services/shop-service";
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGINATION_PARAMS,
+  PRODUCT_CATEGORIES,
 } from "~/types/constants";
 import type { PaginationParams } from "~/types/pagination-params";
-import type { Product, StockStatus } from "~/types/product";
+import type { Product } from "~/types/product";
 import { useUser } from "~/user-context";
 
 const defaultParams = {
@@ -59,7 +60,7 @@ const sortingOptions = [
   { label: "Last-updated Date", value: "lastUpdatedAt" },
 ];
 
-const stockStatusOptions: { label: string; value: StockStatus }[] = [
+const stockStatusOptions = [
   { label: "In stock", value: "IN_STOCK" },
   { label: "Low stock", value: "LOW_STOCK" },
   { label: "Out of stock", value: "OUT_OF_STOCK" },
@@ -72,21 +73,9 @@ export default function Products() {
     () => searchParams.get("productName:contains") || "",
   );
 
-  const { data: filterOptions } = useQuery({
-    queryKey: ["products", "filter-options"],
-    queryFn: async () => {
-      const [shops, products] = await Promise.all([
-        getShops(new URLSearchParams({ _page: "1", _per_page: "1000" })),
-        getProducts(new URLSearchParams({ _page: "1", _per_page: "1000" })),
-      ]);
-
-      return {
-        shops,
-        categories: [
-          ...new Set(products.data.map((product) => product.category)),
-        ],
-      };
-    },
+  const { data: shops } = useQuery({
+    queryKey: ["all-shops"],
+    queryFn: () => getShops(new URLSearchParams()),
   });
 
   const [isConfirming, setIsConfirming] = useState<Product | null>();
@@ -193,7 +182,7 @@ export default function Products() {
             label="Filter by shop"
             value={searchParams.get("shopId") || ""}
             options={
-              filterOptions?.shops.data.map((shop) => ({
+              shops?.data.map((shop) => ({
                 label: shop.shopName,
                 value: shop.id,
               })) || []
@@ -203,12 +192,7 @@ export default function Products() {
           <ProductFilterSelect
             label="Filter by category"
             value={searchParams.get("category") || ""}
-            options={
-              filterOptions?.categories.map((category) => ({
-                label: category,
-                value: category,
-              })) || []
-            }
+            options={PRODUCT_CATEGORIES}
             onChange={(value) => filterProducts("category", value)}
           />
           <ProductFilterSelect

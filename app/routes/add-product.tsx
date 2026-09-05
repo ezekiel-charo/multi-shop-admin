@@ -28,6 +28,7 @@ import {
   updateProduct,
 } from "~/services/product-service";
 import { getShops } from "~/services/shop-service";
+import { PRODUCT_CATEGORIES } from "~/types/constants";
 import { toast } from "../components/ui/toast";
 import type { Route } from "./+types/add-product";
 
@@ -211,12 +212,22 @@ export default function AddProduct({
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="product-category">Category</FieldLabel>
-                  <Input
-                    {...field}
-                    id="product-category"
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Enter category"
-                  />
+
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      id="product-category"
+                      aria-invalid={fieldState.invalid}
+                    >
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PRODUCT_CATEGORIES.map((category) => (
+                        <SelectItem key={category.value} value={category.value}>
+                          {category.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
