@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
+import EmptyState from "~/components/empty-state";
+import ErrorState from "~/components/error-state";
 import Paginator from "~/components/paginator";
+import Search from "~/components/search";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
 import TableHeadRow from "~/components/table-head-row";
+import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import { formatNumber } from "~/lib/utils";
 import { getShops } from "~/services/shop-service";
@@ -18,24 +23,67 @@ export default function Shops() {
     DEFAULT_PAGINATION_PARAMS,
   );
 
-  const { data: page, isLoading } = useQuery({
-    queryKey: ["shops", ...searchParams],
+  const [shopName, setShopName] = useState(
+    () => searchParams.get("shopName:contains") || "",
+  );
+
+  const {
+    data: page,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["shops", searchParams.toString()],
     queryFn: () => getShops(searchParams),
   });
 
   return (
     <>
-      {isLoading && <Skeleton className="h-100" />}
+      <div className="flex justify-between gap-4 mb-4">
+        <Search
+          value={shopName}
+          onChange={setShopName}
+          onSearch={(shopName) => {
+            const params = new URLSearchParams(searchParams);
 
-      {page && (
+            if (shopName) {
+              params.set("shopName:contains", shopName);
+            } else {
+              params.delete("shopName:contains");
+            }
+
+            params.set("_page", "1"); // Reset pagination
+            setSearchParams(params);
+          }}
+        />
+        <Button>Add Shop</Button>
+      </div>
+
+      {isLoading && <Skeleton className="h-100" />}
+      {isError && <ErrorState retry={refetch} error={error} />}
+      {page?.items === 0 && (
+        <EmptyState
+          isSearchQuery={searchParams.has("shopName:contains")}
+          listName="shops"
+        />
+      )}
+
+      {page && page.items > 0 && (
         <>
           <Table
             paginator={
               <Paginator
                 pageSize={DEFAULT_PAGE_SIZE}
                 page={page}
-                onPageChange={(params) => {
-                  setSearchParams({ ...searchParams, ...params });
+                onPageChange={(pageParams) => {
+                  const params = new URLSearchParams(searchParams);
+
+                  Object.entries(pageParams).forEach(([key, value]) => {
+                    params.set(key, String(value));
+                  });
+
+                  setSearchParams(params);
                 }}
               />
             }
