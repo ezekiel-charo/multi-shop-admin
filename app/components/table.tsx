@@ -8,8 +8,8 @@ interface TableProps {
 export default function Table({ children, paginator }: TableProps) {
   return (
     <>
-      <div className="rounded-lg border border-[#cdd2d5] overflow-hidden">
-        <table className="w-full text-[#646566]">{children}</table>
+      <div className="rounded-lg border border-[#cdd2d5] overflow-x-scroll overflow-hidden">
+        <table className="w-full text-[#646566] text-nowrap">{children}</table>
         {paginator}
       </div>
     </>

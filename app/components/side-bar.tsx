@@ -33,7 +33,7 @@ export default function SideBar() {
           </SideBarNavItem>
         </nav>
 
-        <div className="absolute bottom-4 right-0 left-0 p-4">
+        <div className="absolute bottom-4 right-0 left-0 px-4">
           <Button
             onClick={async () => {
               await logout();
