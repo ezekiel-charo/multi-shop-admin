@@ -15,15 +15,21 @@ export async function getProduct(productId: string): Promise<Product> {
 }
 
 export async function addProduct(product: Partial<Product>): Promise<Product> {
-  const response = await api.post("products", product);
+  const response = await api.post("products", {
+    ...product,
+    createdAt: Date.now(),
+  });
   return response.data;
 }
 
 export async function updateProduct(
   productId: string,
-  Product: Partial<Product>,
+  product: Partial<Product>,
 ): Promise<Product> {
-  const response = await api.put(`products/${productId}`, Product);
+  const response = await api.put(`products/${productId}`, {
+    ...product,
+    lastUpdatedAt: Date.now(),
+  });
   return response.data;
 }
 

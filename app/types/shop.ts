@@ -8,6 +8,7 @@ export interface Shop {
   numProducts: number;
   totalStock: number;
   totalInventoryValue: number;
+  lastUpdatedAt: number;
   createdAt: number;
   contactEmail: string;
   status: "ACTIVE" | "INACTIVE";

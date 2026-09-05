@@ -14,7 +14,10 @@ export async function getShop(shopId: string): Promise<Shop> {
 }
 
 export async function addShop(shop: Partial<Shop>): Promise<Shop> {
-  const response = await api.post("shops", shop);
+  const response = await api.post("shops", {
+    ...shop,
+    createdAt: Date.now(),
+  });
   return response.data;
 }
 
@@ -22,7 +25,10 @@ export async function updateShop(
   shopId: string,
   shop: Partial<Shop>,
 ): Promise<Shop> {
-  const response = await api.put(`shops/${shopId}`, shop);
+  const response = await api.put(`shops/${shopId}`, {
+    ...shop,
+    lastUpdatedAt: Date.now(),
+  });
   return response.data;
 }
 
