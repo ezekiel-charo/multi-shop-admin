@@ -75,7 +75,7 @@ export default function Products() {
 
   const { data: shops } = useQuery({
     queryKey: ["all-shops"],
-    queryFn: () => getShops(new URLSearchParams()),
+    queryFn: () => getShops(new URLSearchParams({ _page: "-1" })),
   });
 
   const [isConfirming, setIsConfirming] = useState<Product | null>();
@@ -170,14 +170,14 @@ export default function Products() {
 
   return (
     <>
-      <div className="flex justify-between gap-4 mb-4">
+      <div className="flex flex-col lg:flex-row justify-between gap-4 mb-4">
         <Search
           placeholder="Type product name to search"
           value={productNameSearch}
           onChange={setProductNameSearch}
           onSearch={searchByProductName}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col *:w-full lg:*:w-fit *:text-end items-end lg:flex-row lg:items-center gap-2">
           <ProductFilterSelect
             label="Filter by shop"
             value={searchParams.get("shopId") || ""}
