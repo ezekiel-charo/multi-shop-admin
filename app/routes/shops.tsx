@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { useState } from "react";
@@ -6,6 +8,7 @@ import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
 import Paginator from "~/components/paginator";
 import Search from "~/components/search";
+import Sort from "~/components/sort";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
 import TableHeadRow from "~/components/table-head-row";
@@ -18,12 +21,17 @@ import {
   DEFAULT_PAGINATION_PARAMS,
 } from "~/types/constants";
 
-export default function Shops() {
-  const [searchParams, setSearchParams] = useSearchParams(
-    DEFAULT_PAGINATION_PARAMS,
-  );
+const defaultParams = {
+  ...DEFAULT_PAGINATION_PARAMS,
+  /**
+   * Sort by `createdAt` DESC by default
+   */
+  _sort: "-createdAt",
+};
 
-  const [shopName, setShopName] = useState(
+export default function Shops() {
+  const [searchParams, setSearchParams] = useSearchParams(defaultParams);
+  const [shopNameSearch, setShopNameSearch] = useState(
     () => searchParams.get("shopName:contains") || "",
   );
 
@@ -42,8 +50,8 @@ export default function Shops() {
     <>
       <div className="flex justify-between gap-4 mb-4">
         <Search
-          value={shopName}
-          onChange={setShopName}
+          value={shopNameSearch}
+          onChange={setShopNameSearch}
           onSearch={(shopName) => {
             const params = new URLSearchParams(searchParams);
 
@@ -57,7 +65,25 @@ export default function Shops() {
             setSearchParams(params);
           }}
         />
-        <Button>Add Shop</Button>
+        <div className="flex items-center gap-2">
+          <Sort
+            defaultSort={searchParams.get("_sort") || ""}
+            items={[
+              { label: "Date Created", value: "createdAt" },
+              { label: "Shop Name", value: "shopName" },
+              { label: "No. of Products", value: "numProducts" },
+              { label: "Total Stock", value: "totalStock" },
+              { label: "Tota Inventory Value", value: "totalInventoryValue" },
+            ]}
+            onSort={(sort) => {
+              const params = new URLSearchParams(searchParams);
+              if (!sort) return;
+              params.set("_sort", sort);
+              setSearchParams(params);
+            }}
+          />
+          <Button>Add Shop</Button>
+        </div>
       </div>
 
       {isLoading && <Skeleton className="h-100" />}
@@ -91,7 +117,7 @@ export default function Shops() {
             <thead>
               <TableHeadRow>
                 <th>SHOP</th>
-                <th>CREATED DATE</th>
+                <th>DATE CREATED</th>
                 <th>NO. OF PRODUCTS</th>
                 <th>TOTAL STOCK</th>
                 <th>TOTAL INVENTORY VALUE</th>
