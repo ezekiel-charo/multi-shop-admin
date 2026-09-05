@@ -4,8 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { EllipsisVertical, SquareText } from "lucide-react";
 import { useState } from "react";
-import { useSearchParams } from "react-router";
-import AddShop from "~/components/add-shop";
+import { Link, useSearchParams } from "react-router";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
@@ -32,6 +31,8 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGINATION_PARAMS,
 } from "~/types/constants";
+import type { PaginationParams } from "~/types/pagination-params";
+import type { Shop } from "~/types/shop";
 
 const defaultParams = {
   ...DEFAULT_PAGINATION_PARAMS,
@@ -41,13 +42,21 @@ const defaultParams = {
   _sort: "-createdAt",
 };
 
+const sortingOptions = [
+  { label: "Date Created", value: "createdAt" },
+  { label: "Shop Name", value: "shopName" },
+  { label: "No. of Products", value: "numProducts" },
+  { label: "Total Stock", value: "totalStock" },
+  { label: "Tota Inventory Value", value: "totalInventoryValue" },
+];
+
 export default function Shops() {
   const [searchParams, setSearchParams] = useSearchParams(defaultParams);
   const [shopNameSearch, setShopNameSearch] = useState(
     () => searchParams.get("shopName:contains") || "",
   );
 
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [isConfirming, setIsConfirming] = useState<Shop | null>();
 
   const {
     data: page,
@@ -61,10 +70,16 @@ export default function Shops() {
   });
 
   const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: deleteShop,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shops"] });
+      toast.add({
+        title: "Shop deleted",
+        description: "Shop deleted successfully",
+        type: "success",
+      });
     },
     onError: (error) => {
       toast.add({
@@ -75,48 +90,60 @@ export default function Shops() {
     },
   });
 
+  function searchByShopName(shopName: string) {
+    const params = new URLSearchParams(searchParams);
+
+    if (shopName) {
+      params.set("shopName:contains", shopName);
+    } else {
+      params.delete("shopName:contains");
+    }
+
+    params.set("_page", "1"); // Reset pagination
+    setSearchParams(params);
+  }
+
+  function sortShops(sort: string) {
+    const params = new URLSearchParams(searchParams);
+    if (!sort) return;
+    params.set("_sort", sort);
+    setSearchParams(params);
+  }
+
+  function onPageChange(pageInfo: PaginationParams) {
+    const params = new URLSearchParams(searchParams);
+
+    Object.entries(pageInfo).forEach(([key, value]) => {
+      params.set(key, String(value));
+    });
+
+    setSearchParams(params);
+  }
+
   return (
     <>
       <div className="flex justify-between gap-4 mb-4">
         <Search
           value={shopNameSearch}
           onChange={setShopNameSearch}
-          onSearch={(shopName) => {
-            const params = new URLSearchParams(searchParams);
-
-            if (shopName) {
-              params.set("shopName:contains", shopName);
-            } else {
-              params.delete("shopName:contains");
-            }
-
-            params.set("_page", "1"); // Reset pagination
-            setSearchParams(params);
-          }}
+          onSearch={searchByShopName}
         />
         <div className="flex items-center gap-2">
           <Sort
             defaultSort={searchParams.get("_sort") || ""}
-            items={[
-              { label: "Date Created", value: "createdAt" },
-              { label: "Shop Name", value: "shopName" },
-              { label: "No. of Products", value: "numProducts" },
-              { label: "Total Stock", value: "totalStock" },
-              { label: "Tota Inventory Value", value: "totalInventoryValue" },
-            ]}
-            onSort={(sort) => {
-              const params = new URLSearchParams(searchParams);
-              if (!sort) return;
-              params.set("_sort", sort);
-              setSearchParams(params);
-            }}
+            items={sortingOptions}
+            onSort={sortShops}
           />
-          <AddShop />
+          <Link to="add">
+            <Button>Add Shop</Button>
+          </Link>
         </div>
       </div>
 
       {isLoading && <Skeleton className="h-100" />}
+
       {isError && <ErrorState retry={refetch} error={error} />}
+
       {page?.items === 0 && (
         <EmptyState
           isSearchQuery={searchParams.has("shopName:contains")}
@@ -131,15 +158,7 @@ export default function Shops() {
               <Paginator
                 pageSize={DEFAULT_PAGE_SIZE}
                 page={page}
-                onPageChange={(pageParams) => {
-                  const params = new URLSearchParams(searchParams);
-
-                  Object.entries(pageParams).forEach(([key, value]) => {
-                    params.set(key, String(value));
-                  });
-
-                  setSearchParams(params);
-                }}
+                onPageChange={onPageChange}
               />
             }
           >
@@ -200,11 +219,13 @@ export default function Shops() {
                         <DropdownMenuGroup>
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuItem>View</DropdownMenuItem>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <Link to={`/shops/edit/${shop.id}`}>
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                          </Link>
                           <DropdownMenuItem
                             disabled={mutation.isPending}
                             onClick={() => {
-                              setIsConfirming(true);
+                              setIsConfirming(shop);
                             }}
                             variant="destructive"
                           >
@@ -214,15 +235,15 @@ export default function Shops() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <ConfirmationDialog
-                      open={isConfirming}
+                      open={!!isConfirming}
                       pending={mutation.isPending}
-                      dialogTitle={`Delete ${shop.shopName}?`}
+                      dialogTitle={`Delete ${isConfirming?.shopName}?`}
                       description="This action cannot be undone"
                       onOpenChange={(confirmed) => {
                         if (confirmed) {
                           mutation.mutate(shop.id);
                         }
-                        setIsConfirming(false);
+                        setIsConfirming(null);
                       }}
                     />
                   </td>

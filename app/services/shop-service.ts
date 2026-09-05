@@ -7,7 +7,12 @@ export async function getShops(params: URLSearchParams): Promise<Page<Shop>> {
   return response.data;
 }
 
-export async function addShop(shop: Partial<Shop>): Promise<boolean> {
+export async function getShop(shopId: string): Promise<Shop> {
+  const response = await api.get(`shops/${shopId}`);
+  return response.data;
+}
+
+export async function addShop(shop: Partial<Shop>): Promise<Shop> {
   const response = await api.post("shops", shop);
   return response.data;
 }
@@ -15,12 +20,12 @@ export async function addShop(shop: Partial<Shop>): Promise<boolean> {
 export async function updateShop(
   shopId: string,
   shop: Partial<Shop>,
-): Promise<boolean> {
+): Promise<Shop> {
   const response = await api.put(`shops/${shopId}`, shop);
   return response.data;
 }
 
-export async function deleteShop(shopId: string): Promise<boolean> {
+export async function deleteShop(shopId: string): Promise<Shop> {
   const response = await api.delete(`shops/${shopId}`);
   return response.data;
 }
