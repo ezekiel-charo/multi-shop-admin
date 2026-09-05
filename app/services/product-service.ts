@@ -1,4 +1,5 @@
 import api from "~/lib/axios";
+import { mapProductWithDerivedFields } from "~/lib/product-data-utils";
 import type { Page } from "~/types/page";
 import type { Product } from "~/types/product";
 
@@ -6,12 +7,15 @@ export async function getProducts(
   params: URLSearchParams,
 ): Promise<Page<Product>> {
   const response = await api.get("products", { params });
-  return response.data;
+  return {
+    ...response.data,
+    data: response.data.data.map(mapProductWithDerivedFields),
+  };
 }
 
 export async function getProduct(productId: string): Promise<Product> {
   const response = await api.get(`products/${productId}`);
-  return response.data;
+  return mapProductWithDerivedFields(response.data);
 }
 
 export async function addProduct(product: Partial<Product>): Promise<Product> {
@@ -19,7 +23,7 @@ export async function addProduct(product: Partial<Product>): Promise<Product> {
     ...product,
     createdAt: Date.now(),
   });
-  return response.data;
+  return mapProductWithDerivedFields(response.data);
 }
 
 export async function updateProduct(
@@ -30,7 +34,7 @@ export async function updateProduct(
     ...product,
     lastUpdatedAt: Date.now(),
   });
-  return response.data;
+  return mapProductWithDerivedFields(response.data);
 }
 
 export async function deleteProduct(productId: string): Promise<Product> {

@@ -1,11 +1,14 @@
 import api from "~/lib/axios";
+import { mapShopWithDerivedFields } from "~/lib/shop-data-utils";
 import type { Page } from "~/types/page";
 import type { Shop } from "~/types/shop";
-import { attachDerivedShopFields } from "~/lib/shop-data-utils";
 
 export async function getShops(params: URLSearchParams): Promise<Page<Shop>> {
-  const response = await api.get("shops", { params });
-  return attachDerivedShopFields(response.data);
+  const { data: shopPage } = await api.get("shops", { params });
+  return {
+    ...shopPage,
+    data: shopPage.data.map(mapShopWithDerivedFields),
+  };
 }
 
 export async function getShop(shopId: string): Promise<Shop> {
@@ -18,7 +21,7 @@ export async function addShop(shop: Partial<Shop>): Promise<Shop> {
     ...shop,
     createdAt: Date.now(),
   });
-  return response.data;
+  return mapShopWithDerivedFields(response.data);
 }
 
 export async function updateShop(
@@ -29,7 +32,7 @@ export async function updateShop(
     ...shop,
     lastUpdatedAt: Date.now(),
   });
-  return response.data;
+  return mapShopWithDerivedFields(response.data);
 }
 
 export async function deleteShop(shopId: string): Promise<Shop> {

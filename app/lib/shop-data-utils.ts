@@ -1,4 +1,3 @@
-import type { Page } from "~/types/page";
 import type { Product } from "~/types/product";
 import type { Shop } from "~/types/shop";
 
@@ -18,12 +17,5 @@ export function mapShopWithDerivedFields(shop: Shop): Shop {
   return {
     ...shopData,
     ...getShopDerivedFields(products),
-  };
-}
-
-export function attachDerivedShopFields(page: Page<Shop>): Page<Shop> {
-  return {
-    ...page,
-    data: page.data.map(mapShopWithDerivedFields),
   };
 }
