@@ -14,6 +14,7 @@ import Sort from "~/components/sort";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
 import TableHeadRow from "~/components/table-head-row";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -199,8 +200,18 @@ export default function Products() {
                         <Building2 className="size-10" />
                       )}
                       <div>
-                        <div className="font-semibold text-black">
+                        <div className="font-semibold text-black mb-1">
                           {product.productName}
+                          <Badge
+                            className="ms-2 py-0"
+                            variant={
+                              product.status === "ACTIVE"
+                                ? "secondary"
+                                : "destructive"
+                            }
+                          >
+                            {product.status}
+                          </Badge>
                         </div>
                         <div className="xs">SKU {product.sku}</div>
                       </div>

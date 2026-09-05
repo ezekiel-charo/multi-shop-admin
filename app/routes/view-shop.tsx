@@ -2,6 +2,7 @@ import { Building2 } from "lucide-react";
 import { formatNumber } from "~/lib/utils";
 import { getShop } from "~/services/shop-service";
 import type { Route } from "./+types/view-shop";
+import { Badge } from "~/components/ui/badge";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   if (params.shopId) {
@@ -28,9 +29,14 @@ export default function ViewShop({ loaderData: shop }: Route.ComponentProps) {
           <div className="flex flex-col gap-1">
             <div className="font-semibold text-black text-lg">
               {shop?.shopName}
-              <span className="inline-block ms-2 px-2 text-sm lowercase font-bold border rounded-xl">
+              <Badge
+                className="ms-2"
+                variant={
+                  shop?.status === "ACTIVE" ? "secondary" : "destructive"
+                }
+              >
                 {shop?.status}
-              </span>
+              </Badge>
             </div>
 
             <div className="text-sm">
