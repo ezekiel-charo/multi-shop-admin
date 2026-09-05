@@ -60,7 +60,6 @@ export default function AddShop() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shops"] });
       setOpen(false);
-      form.reset();
       toast.add({
         title: "Successful",
         description: "Shop has been added",
@@ -70,7 +69,14 @@ export default function AddShop() {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(_open) => {
+          form.reset();
+          mutation.reset();
+          setOpen(_open);
+        }}
+      >
         <DialogTrigger render={<Button>Add Shop</Button>} />
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
