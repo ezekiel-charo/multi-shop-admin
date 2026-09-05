@@ -85,7 +85,7 @@ export default function AddProduct({
   const mutation = useMutation({
     mutationFn: (data: ProductForm) => {
       if (isEditing) {
-        return updateProduct(product.id, data);
+        return updateProduct(product.id, { ...product, ...data });
       }
 
       return addProduct(data);

@@ -64,7 +64,7 @@ export default function AddShop({ loaderData: shop }: Route.ComponentProps) {
   const mutation = useMutation({
     mutationFn: (data: ShopForm) => {
       if (isEditing) {
-        return updateShop(shop.id, data);
+        return updateShop(shop.id, { ...shop, ...data });
       }
 
       return addShop(data);
