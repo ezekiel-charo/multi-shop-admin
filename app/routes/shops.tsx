@@ -1,9 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
+import { EllipsisVertical } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
+import { ConfirmationDialog } from "~/components/confirmation-dialog";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
 import Paginator from "~/components/paginator";
@@ -13,9 +15,18 @@ import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
 import TableHeadRow from "~/components/table-head-row";
 import { Button } from "~/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Skeleton } from "~/components/ui/skeleton";
+import { toast } from "~/components/ui/toast";
 import { formatNumber } from "~/lib/utils";
-import { getShops } from "~/services/shop-service";
+import { deleteShop, getShops } from "~/services/shop-service";
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGINATION_PARAMS,
@@ -35,6 +46,8 @@ export default function Shops() {
     () => searchParams.get("shopName:contains") || "",
   );
 
+  const [isConfirming, setIsConfirming] = useState(false);
+
   const {
     data: page,
     isLoading,
@@ -44,6 +57,17 @@ export default function Shops() {
   } = useQuery({
     queryKey: ["shops", searchParams.toString()],
     queryFn: () => getShops(searchParams),
+  });
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: deleteShop,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shops"] });
+    },
+    onError: (error) => {
+      toast.add({ title: "Failed to delete", description: error.message, type: 'error' });
+    },
   });
 
   return (
@@ -148,7 +172,45 @@ export default function Shops() {
                   <td>{formatNumber(shop.numProducts)}</td>
                   <td>{formatNumber(shop.totalStock)}</td>
                   <td>{formatNumber(shop.totalInventoryValue)}</td>
-                  <td></td>
+                  <td>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button variant="secondary">
+                            <EllipsisVertical />
+                          </Button>
+                        }
+                      />
+                      <DropdownMenuContent>
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>View</DropdownMenuItem>
+                          <DropdownMenuItem>Edit</DropdownMenuItem>
+                          <DropdownMenuItem
+                            disabled={mutation.isPending}
+                            onClick={() => {
+                              setIsConfirming(true);
+                            }}
+                            variant="destructive"
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    <ConfirmationDialog
+                      open={isConfirming}
+                      pending={mutation.isPending}
+                      dialogTitle={`Delete ${shop.shopName}?`}
+                      description="This action cannot be undone"
+                      onOpenChange={(confirmed) => {
+                        if (confirmed) {
+                          mutation.mutate(shop.id);
+                        }
+                        setIsConfirming(false);
+                      }}
+                    />
+                  </td>
                 </TableBodyRow>
               ))}
             </tbody>
