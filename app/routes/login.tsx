@@ -24,6 +24,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "~/components/ui/input-group";
+import { getLoginRedirectDestination } from "~/lib/route-protection";
 import { getToken, login, setToken } from "~/services/auth-service";
 import { useUser } from "~/user-context";
 
@@ -39,11 +40,7 @@ export default function Login() {
   const { refreshUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
 
-  const redirectTo = new URLSearchParams(location.search).get("redirect");
-  const destination =
-    redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
-      ? redirectTo
-      : "/dashboard";
+  const destination = getLoginRedirectDestination(location.search);
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),

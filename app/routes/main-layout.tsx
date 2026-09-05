@@ -2,20 +2,16 @@ import { Navigate, Outlet, useLocation } from "react-router";
 import BottomMenu from "~/components/bottom-menu";
 import SideBar from "~/components/side-bar";
 import TopBar from "~/components/top-bar";
+import { getProtectedRouteRedirect } from "~/lib/route-protection";
 import { useUser } from "~/user-context";
 
 export default function MainLayout() {
   const { user } = useUser();
   const location = useLocation();
+  const redirectTo = getProtectedRouteRedirect(user, location);
 
-  if (!user) {
-    const redirectTo = `${location.pathname}${location.search}${location.hash}`;
-    return (
-      <Navigate
-        to={`/login?redirect=${encodeURIComponent(redirectTo)}`}
-        replace
-      />
-    );
+  if (redirectTo) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return (

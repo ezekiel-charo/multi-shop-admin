@@ -1,22 +1,14 @@
 import { Navigate, Outlet, useLocation } from "react-router";
+import { getProtectedRouteRedirect } from "~/lib/route-protection";
 import { useUser } from "~/user-context";
 
 export default function AdminLayout() {
-  const { user, isAdmin } = useUser();
+  const { user } = useUser();
   const location = useLocation();
+  const redirectTo = getProtectedRouteRedirect(user, location, true);
 
-  if (!user) {
-    const redirectTo = `${location.pathname}${location.search}${location.hash}`;
-    return (
-      <Navigate
-        to={`/login?redirect=${encodeURIComponent(redirectTo)}`}
-        replace
-      />
-    );
-  }
-
-  if (!isAdmin) {
-    return <Navigate to="/dashboard" replace />;
+  if (redirectTo) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return <Outlet />;
