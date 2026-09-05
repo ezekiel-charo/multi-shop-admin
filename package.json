@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "react-router build",
-    "dev:server": "npx json-server db.json",
+    "dev:server": "npx json-server db.json --port 3300",
     "dev:client": "react-router dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "start": "react-router-serve ./build/server/index.js",
+    "start": "concurrently \"npm run dev:server\" \"react-router-serve ./build/server/index.js\"",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {

@@ -29,7 +29,20 @@
       }
     ]
   },
-  "shops": [],
+  "shops": [
+    {
+      "logoUrl": "https://github.com/evilrabbit.png",
+      "shopName": "Good shop",
+      "description": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugit aliquam dolore, rem id aperiam ipsum praesentium ducimus incidunt quo placeat, voluptatem doloribus, dicta repudiandae. Iste nemo tenetur dolores excepturi eligendi.",
+      "numProducts": 23,
+      "totalStock": 105,
+      "totalInventoryValue": 454000,
+      "createdAt": 1788561016167,
+      "contactEmail": "info@bigretail.com",
+      "status": "ACTIVE",
+      "id": "yrGt3LEtZR8"
+    }
+  ],
   "products": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
