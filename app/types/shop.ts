@@ -1,11 +1,12 @@
 export interface Shop {
+  id: string;
   logoUrl: string;
   shopName: string;
   description: string;
-  numberOfProducts: number;
+  numProducts: number;
   totalStock: number;
   totalInventoryValue: number;
-  createdDate: number;
+  createdAt: number;
   contactEmail: string;
   status: "ACTIVE" | "INACTIVE";
 }
