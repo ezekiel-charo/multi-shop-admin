@@ -15,7 +15,7 @@ const demoUsers: Record<string, User> = {
     role: "ADMIN",
     roleName: "Administrator",
   },
-  "viewer@gmail.com+password": {
+  "viewer@gmail.com+12345678": {
     email: "viewer@gmail.com",
     name: "John Smith",
     role: "VIEWER",
