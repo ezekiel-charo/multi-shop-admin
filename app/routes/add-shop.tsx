@@ -24,6 +24,7 @@ import { Textarea } from "~/components/ui/textarea";
 import { addShop, getShop, updateShop } from "~/services/shop-service";
 import { toast } from "../components/ui/toast";
 import type { Route } from "./+types/add-shop";
+import { ArrowLeft } from "lucide-react";
 
 const shopFormSchema = z.object({
   shopName: z.string().min(1, "Shop name is required."),
@@ -97,7 +98,12 @@ export default function AddShop({ loaderData: shop }: Route.ComponentProps) {
 
   return (
     <>
-      <div className="font-bold text-lg mb-4">
+      <Button onClick={() => navigate("/shops")} variant="outline">
+        <ArrowLeft />
+        Back
+      </Button>
+
+      <div className="font-bold text-lg my-4">
         {isEditing ? "Edit Shop" : "Add a Shop"}
       </div>
 
