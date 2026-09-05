@@ -15,5 +15,10 @@ export default [
     route("shops/edit/:shopId", "./routes/add-shop.tsx", { id: "edit-shop" }),
     route("shops/view/:shopId", "./routes/view-shop.tsx"),
     route("products", "./routes/products.tsx"),
+    route("products/add", "./routes/add-product.tsx"),
+    route("products/edit/:productId", "./routes/add-product.tsx", {
+      id: "edit-product",
+    }),
+    route("products/view/:productId", "./routes/view-product.tsx"),
   ]),
 ] satisfies RouteConfig;
