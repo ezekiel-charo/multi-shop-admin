@@ -7,14 +7,10 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "~/components/ui/toast";
 import type { Route } from "./+types/root";
 import "./app.css";
-import { toast, Toaster } from "~/components/ui/toast";
-import {
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
