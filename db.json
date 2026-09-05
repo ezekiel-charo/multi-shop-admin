@@ -1,0 +1,35 @@
+{
+  "dashboard": {
+    "numLowStockProducts": 5,
+    "numOutOfStockProducts": 2,
+    "totalInventoryValue": 53200900,
+    "totalProducts": 120,
+    "totalShops": 254,
+    "totalStock": 13402,
+    "topShops": [
+      {
+        "inventoryValue": 1243000,
+        "shopName": "Big Retail Shop"
+      },
+      {
+        "inventoryValue": 320000,
+        "shopName": "Relax Corner Store"
+      },
+      {
+        "inventoryValue": 670000,
+        "shopName": "Ever-open 24h Shop"
+      },
+      {
+        "inventoryValue": 530000,
+        "shopName": "Late Night Retail"
+      },
+      {
+        "inventoryValue": 123000,
+        "shopName": "Neighbourly Shop"
+      }
+    ]
+  },
+  "shops": [],
+  "products": [],
+  "$schema": "./node_modules/json-server/schema.json"
+}

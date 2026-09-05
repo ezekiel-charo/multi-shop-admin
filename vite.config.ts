@@ -7,4 +7,9 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  server: {
+    watch: {
+      ignored: ["**/db.json"], // Prevents reloads whenever a POST is made to json-servers
+    },
+  },
 });
