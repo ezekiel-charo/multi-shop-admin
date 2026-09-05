@@ -5,7 +5,7 @@ interface LoadingErrorProps {
   error: Error;
   retry: () => void;
 }
-export default function LoadingError({ error, retry }: LoadingErrorProps) {
+export default function ErrorState({ error, retry }: LoadingErrorProps) {
   return (
     <>
       <div

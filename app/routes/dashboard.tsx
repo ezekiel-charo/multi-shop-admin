@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import DashboardSkeleton from "~/components/dashboard-skeleton";
 import DashboardStatCard from "~/components/dashboard-stat-card";
-import LoadingError from "~/components/loading-error";
+import ErrorState from "~/components/error-state";
 import ProductStockStatusChart from "~/components/product-stock-status-chart";
 import { TopFiveShopsChart } from "~/components/top-five-shops-chart";
 import { getDashboardData } from "~/services/dashboard-service";
@@ -18,7 +18,7 @@ export default function Dashboard() {
       <meta name="description" content="MultiShop Admin Panel dashboard" />
 
       {isPending && <DashboardSkeleton />}
-      {isError && <LoadingError error={error} retry={refetch} />}
+      {isError && <ErrorState error={error} retry={refetch} />}
 
       {data && (
         <>
