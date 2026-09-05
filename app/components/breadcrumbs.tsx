@@ -6,7 +6,7 @@ export function Breadcrumbs() {
   const segments = pathname.split("/").filter(Boolean);
 
   return (
-    <nav aria-label="Breadcrumb" className="font-semibold text-sm">
+    <nav aria-label="Breadcrumb" className="font-semibold text-lg">
       {segments.map((segment, index) => {
         const path = "/" + segments.slice(0, index + 1).join("/");
         const label = decodeURIComponent(segment)
