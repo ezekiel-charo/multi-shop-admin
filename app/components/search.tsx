@@ -3,18 +3,24 @@ import { Input } from "./ui/input";
 
 interface SearchProps {
   value: string;
+  placeholder: string;
   onSearch: (searchStr: string) => void;
   onChange: (searchStr: string) => void;
 }
 
-export default function Search({ value, onChange, onSearch }: SearchProps) {
+export default function Search({
+  value,
+  placeholder,
+  onChange,
+  onSearch,
+}: SearchProps) {
   const debouncedSearch = debounce(onSearch, 500);
 
   return (
     <>
       <Input
         type="search"
-        placeholder="Type shop name to search"
+        placeholder={placeholder}
         className="lg:max-w-100"
         value={value}
         onChange={(e) => {

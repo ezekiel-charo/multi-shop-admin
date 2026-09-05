@@ -124,6 +124,7 @@ export default function Shops() {
     <>
       <div className="flex justify-between gap-4 mb-4">
         <Search
+          placeholder="Type shop name to search"
           value={shopNameSearch}
           onChange={setShopNameSearch}
           onSearch={searchByShopName}
