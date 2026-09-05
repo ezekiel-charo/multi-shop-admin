@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:3300";
+export const BASE_URL = "https://mock-api-production-ff48.up.railway.app";
 export const TOKEN_KEY = "auth_token";
 
 export const DEFAULT_PAGE_SIZE = 10;
