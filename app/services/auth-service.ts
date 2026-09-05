@@ -1,37 +1,54 @@
-import axios from "axios";
-import { BASE_URL, TOKEN_KEY } from "~/types/constants";
+import { TOKEN_KEY } from "~/types/constants";
 import type { LoginCredentials } from "~/types/login-credentials";
 import type { LoginResponse } from "~/types/login-response";
+import type { User } from "~/types/user";
 
-const authApi = axios.create({
-  baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-});
+// const authApi = axios.create({
+//   baseURL: BASE_URL,
+//   headers: { "Content-Type": "application/json" },
+// });
 
-export async function login(
-  credentials: LoginCredentials,
-): Promise<LoginResponse> {
-  const demoUsers: Record<string, string> = {
-    "admin@gmail.com": "adminpass",
-    "viewer@gmail.com": "viewerpass",
-  };
+const demoUsers: Record<string, User> = {
+  "admin@gmail.com+pass1234": {
+    email: "admin@gmail.com",
+    name: "Jane Doe",
+    role: "ADMIN",
+    roleName: "Administrator",
+  },
+  "viewer@gmail.com+password": {
+    email: "admin@gmail.com",
+    name: "John Smith",
+    role: "VIEWER",
+    roleName: "Viewer",
+  },
+};
 
-  return new Promise((resolve, reject) => {
-    // TODO: Implement proper serverside login
-    if (!demoUsers[credentials.email]) {
-      reject(new Error("Invalid email or password"));
-    } else if (demoUsers[credentials.email] === credentials.password) {
-      resolve({ token: "eyjf4kjh3423kbkK4KJK" });
-    }
-    reject(new Error("Invalid email or password"));
-  });
+export async function login({
+  email,
+  password,
+}: LoginCredentials): Promise<LoginResponse> {
+  // NOTE: Dummy authentication. Not for production
+  const key = `${email}+${password}`;
+  const user = demoUsers[key];
 
+  if (user) {
+    return { token: key };
+  }
+
+  throw new Error("Invalid email or password");
   // const response = await authApi.post("/login", credentials);
   // return response.data;
 }
 
+export async function getCurrentUser(): Promise<User> {
+  const token = getToken();
+  if (token) {
+    return demoUsers[token];
+  }
+  throw new Error("User not found");
+}
+
 export async function logout() {
-  // TODO: Send logout request to backend
   removeToken();
 }
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "~/services/auth-service";
+import { getToken, logout } from "~/services/auth-service";
 import { BASE_URL } from "~/types/constants";
 
 const api = axios.create({
@@ -9,5 +9,15 @@ const api = axios.create({
     Authorization: `Bearer ${getToken()}`,
   },
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      logout();
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default api;
