@@ -2,9 +2,10 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, SquareText } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "react-router";
+import AddShop from "~/components/add-shop";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
@@ -66,7 +67,11 @@ export default function Shops() {
       queryClient.invalidateQueries({ queryKey: ["shops"] });
     },
     onError: (error) => {
-      toast.add({ title: "Failed to delete", description: error.message, type: 'error' });
+      toast.add({
+        title: "Failed to delete",
+        description: error.message,
+        type: "error",
+      });
     },
   });
 
@@ -106,7 +111,7 @@ export default function Shops() {
               setSearchParams(params);
             }}
           />
-          <Button>Add Shop</Button>
+          <AddShop />
         </div>
       </div>
 
@@ -153,17 +158,27 @@ export default function Shops() {
                 <TableBodyRow key={shop.id}>
                   <td>
                     <div className="flex gap-2">
-                      <img
-                        className="size-10 rounded-md"
-                        src={shop.logoUrl}
-                        alt={shop.shopName + " logo"}
-                      />
+                      {shop.logoUrl ? (
+                        <img
+                          className="size-10 rounded-md"
+                          src={shop.logoUrl}
+                          alt={shop.shopName + " logo"}
+                        />
+                      ) : (
+                        <SquareText className="size-10" />
+                      )}
                       <div title={shop.description}>
                         <div className="font-semibold text-black">
                           {shop.shopName}
                         </div>
                         <div className="max-w-50 text-nowrap overflow-hidden text-ellipsis">
-                          {shop.description.slice(0, 32)}
+                          {shop.description ? (
+                            shop.description
+                          ) : (
+                            <span className="text-xs text-gray-300">
+                              No description
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
