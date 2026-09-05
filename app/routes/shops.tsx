@@ -38,6 +38,11 @@ import { useUser } from "~/user-context";
 const defaultParams = {
   ...DEFAULT_PAGINATION_PARAMS,
   /**
+   * Includes a list of all products for each shop
+   */
+  _embed: "products",
+
+  /**
    * Sort by `createdAt` DESC by default
    */
   _sort: "-createdAt",

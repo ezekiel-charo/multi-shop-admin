@@ -1,10 +1,11 @@
 import api from "~/lib/axios";
 import type { Page } from "~/types/page";
 import type { Shop } from "~/types/shop";
+import { attachDerivedShopFields } from "~/lib/shop-data-utils";
 
 export async function getShops(params: URLSearchParams): Promise<Page<Shop>> {
   const response = await api.get("shops", { params });
-  return response.data;
+  return attachDerivedShopFields(response.data);
 }
 
 export async function getShop(shopId: string): Promise<Shop> {

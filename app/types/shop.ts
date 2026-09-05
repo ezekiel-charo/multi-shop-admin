@@ -1,3 +1,5 @@
+import type { Product } from "./product";
+
 export interface Shop {
   id: string;
   logoUrl: string;
@@ -9,4 +11,5 @@ export interface Shop {
   createdAt: number;
   contactEmail: string;
   status: "ACTIVE" | "INACTIVE";
+  products?: Product[];
 }
