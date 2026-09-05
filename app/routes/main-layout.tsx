@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import BottomMenu from "~/components/bottom-menu";
 import SideBar from "~/components/side-bar";
 import TopBar from "~/components/top-bar";
@@ -6,10 +6,16 @@ import { useUser } from "~/user-context";
 
 export default function MainLayout() {
   const { user } = useUser();
+  const location = useLocation();
 
   if (!user) {
-    // Redirect to login page
-    return <Navigate to="/login" replace />;
+    const redirectTo = `${location.pathname}${location.search}${location.hash}`;
+    return (
+      <Navigate
+        to={`/login?redirect=${encodeURIComponent(redirectTo)}`}
+        replace
+      />
+    );
   }
 
   return (

@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import Logo from "~/components/logo";
 import {
   Field,
@@ -34,9 +34,16 @@ const loginFormSchema = z.object({
 
 export default function Login() {
   const token = getToken();
+  const location = useLocation();
   const navigate = useNavigate();
   const { refreshUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
+
+  const redirectTo = new URLSearchParams(location.search).get("redirect");
+  const destination =
+    redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+      ? redirectTo
+      : "/dashboard";
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -52,13 +59,12 @@ export default function Login() {
       // Save the token and navigate to the dashboard
       setToken(loginResponse.token);
       refreshUser();
-      navigate("/dashboard");
+      navigate(destination, { replace: true });
     },
   });
 
   if (token) {
-    // Redirect to dashboard page
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={destination} replace />;
   }
 
   return (
