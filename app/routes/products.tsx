@@ -2,13 +2,14 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { Building2, EllipsisVertical } from "lucide-react";
+import { Building2, EllipsisVertical, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
 import Paginator from "~/components/paginator";
+import ProductFilterSelect from "~/components/product-filter-select";
 import Search from "~/components/search";
 import Sort from "~/components/sort";
 import Table from "~/components/table";
@@ -28,12 +29,13 @@ import { Skeleton } from "~/components/ui/skeleton";
 import { toast } from "~/components/ui/toast";
 import { formatNumber } from "~/lib/utils";
 import { deleteProduct, getProducts } from "~/services/product-service";
+import { getShops } from "~/services/shop-service";
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGINATION_PARAMS,
 } from "~/types/constants";
 import type { PaginationParams } from "~/types/pagination-params";
-import type { Product } from "~/types/product";
+import type { Product, StockStatus } from "~/types/product";
 import { useUser } from "~/user-context";
 
 const defaultParams = {
@@ -57,12 +59,35 @@ const sortingOptions = [
   { label: "Last-updated Date", value: "lastUpdatedAt" },
 ];
 
+const stockStatusOptions: { label: string; value: StockStatus }[] = [
+  { label: "In stock", value: "IN_STOCK" },
+  { label: "Low stock", value: "LOW_STOCK" },
+  { label: "Out of stock", value: "OUT_OF_STOCK" },
+];
+
 export default function Products() {
   const { isAdmin } = useUser();
   const [searchParams, setSearchParams] = useSearchParams(defaultParams);
   const [productNameSearch, setProductNameSearch] = useState(
     () => searchParams.get("productName:contains") || "",
   );
+
+  const { data: filterOptions } = useQuery({
+    queryKey: ["products", "filter-options"],
+    queryFn: async () => {
+      const [shops, products] = await Promise.all([
+        getShops(new URLSearchParams({ _page: "1", _per_page: "1000" })),
+        getProducts(new URLSearchParams({ _page: "1", _per_page: "1000" })),
+      ]);
+
+      return {
+        shops,
+        categories: [
+          ...new Set(products.data.map((product) => product.category)),
+        ],
+      };
+    },
+  });
 
   const [isConfirming, setIsConfirming] = useState<Product | null>();
 
@@ -118,6 +143,32 @@ export default function Products() {
     setSearchParams(params);
   }
 
+  function filterProducts(filter: string, value: string) {
+    const params = new URLSearchParams(searchParams);
+
+    if (value) {
+      params.set(filter, value);
+    } else {
+      params.delete(filter);
+    }
+
+    params.set("_page", "1");
+    setSearchParams(params);
+  }
+
+  function clearFilters() {
+    const params = new URLSearchParams(searchParams);
+    ["shopId", "category", "stockStatus"].forEach((filter) => {
+      params.delete(filter);
+    });
+    params.set("_page", "1");
+    setSearchParams(params);
+  }
+
+  const hasActiveFilters = ["shopId", "category", "stockStatus"].some(
+    (filter) => searchParams.has(filter),
+  );
+
   function onPageChange(pageInfo: PaginationParams) {
     const params = new URLSearchParams(searchParams);
 
@@ -138,6 +189,39 @@ export default function Products() {
           onSearch={searchByProductName}
         />
         <div className="flex items-center gap-2">
+          <ProductFilterSelect
+            label="Filter by shop"
+            value={searchParams.get("shopId") || ""}
+            options={
+              filterOptions?.shops.data.map((shop) => ({
+                label: shop.shopName,
+                value: shop.id,
+              })) || []
+            }
+            onChange={(value) => filterProducts("shopId", value)}
+          />
+          <ProductFilterSelect
+            label="Filter by category"
+            value={searchParams.get("category") || ""}
+            options={
+              filterOptions?.categories.map((category) => ({
+                label: category,
+                value: category,
+              })) || []
+            }
+            onChange={(value) => filterProducts("category", value)}
+          />
+          <ProductFilterSelect
+            label="Filter by stock status"
+            value={searchParams.get("stockStatus") || ""}
+            options={stockStatusOptions}
+            onChange={(value) => filterProducts("stockStatus", value)}
+          />
+          {hasActiveFilters && (
+            <Button variant="ghost" onClick={clearFilters}>
+              <X /> Clear filters
+            </Button>
+          )}
           <Sort
             defaultSort={searchParams.get("_sort") || ""}
             items={sortingOptions}
