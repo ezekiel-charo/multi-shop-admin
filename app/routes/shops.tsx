@@ -33,6 +33,7 @@ import {
 } from "~/types/constants";
 import type { PaginationParams } from "~/types/pagination-params";
 import type { Shop } from "~/types/shop";
+import { useUser } from "~/user-context";
 
 const defaultParams = {
   ...DEFAULT_PAGINATION_PARAMS,
@@ -51,6 +52,7 @@ const sortingOptions = [
 ];
 
 export default function Shops() {
+  const { isAdmin } = useUser();
   const [searchParams, setSearchParams] = useSearchParams(defaultParams);
   const [shopNameSearch, setShopNameSearch] = useState(
     () => searchParams.get("shopName:contains") || "",
@@ -135,9 +137,11 @@ export default function Shops() {
             items={sortingOptions}
             onSort={sortShops}
           />
-          <Link to="add">
-            <Button>Add Shop</Button>
-          </Link>
+          {isAdmin && (
+            <Link to="add">
+              <Button>Add Shop</Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -224,18 +228,22 @@ export default function Shops() {
                           <Link to={`view/${shop.id}`}>
                             <DropdownMenuItem>View</DropdownMenuItem>
                           </Link>
-                          <Link to={`edit/${shop.id}`}>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                          </Link>
-                          <DropdownMenuItem
-                            disabled={mutation.isPending}
-                            onClick={() => {
-                              setIsConfirming(shop);
-                            }}
-                            variant="destructive"
-                          >
-                            Delete
-                          </DropdownMenuItem>
+                          {isAdmin && (
+                            <>
+                              <Link to={`edit/${shop.id}`}>
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                              </Link>
+                              <DropdownMenuItem
+                                disabled={mutation.isPending}
+                                onClick={() => {
+                                  setIsConfirming(shop);
+                                }}
+                                variant="destructive"
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </>
+                          )}
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>

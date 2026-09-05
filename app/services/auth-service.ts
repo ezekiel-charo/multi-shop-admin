@@ -16,7 +16,7 @@ const demoUsers: Record<string, User> = {
     roleName: "Administrator",
   },
   "viewer@gmail.com+password": {
-    email: "admin@gmail.com",
+    email: "viewer@gmail.com",
     name: "John Smith",
     role: "VIEWER",
     roleName: "Viewer",
@@ -41,11 +41,16 @@ export async function login({
 }
 
 export async function getCurrentUser(): Promise<User> {
-  const token = getToken();
-  if (token) {
-    return demoUsers[token];
+  const user = getCurrentUserFromToken();
+  if (!user) {
+    throw new Error("User not found");
   }
-  throw new Error("User not found");
+  return user;
+}
+
+export function getCurrentUserFromToken(): User | null {
+  const token = getToken();
+  return token ? (demoUsers[token] ?? null) : null;
 }
 
 export async function logout() {
@@ -53,15 +58,17 @@ export async function logout() {
 }
 
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  return typeof window === "undefined"
+    ? null
+    : window.localStorage.getItem(TOKEN_KEY);
 }
 
 export function setToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token);
+  window.localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function removeToken() {
-  localStorage.removeItem(TOKEN_KEY);
+  window.localStorage.removeItem(TOKEN_KEY);
 }
 
 export function isAuthenticated() {

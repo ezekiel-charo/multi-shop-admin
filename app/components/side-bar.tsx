@@ -1,12 +1,13 @@
 import { LayoutDashboard, Package, Store } from "lucide-react";
 import { useNavigate } from "react-router";
-import { logout } from "~/services/auth-service";
+import { useUser } from "~/user-context";
 import Logo from "./logo";
 import SideBarNavItem from "./side-bar-nav-item";
 import { Button } from "./ui/button";
 
 export default function SideBar() {
   const navigate = useNavigate();
+  const { clearUser } = useUser();
 
   return (
     <>
@@ -36,7 +37,7 @@ export default function SideBar() {
         <div className="absolute bottom-4 right-0 left-0 px-4">
           <Button
             onClick={async () => {
-              await logout();
+              await clearUser();
               navigate("/login");
             }}
             variant="destructive"

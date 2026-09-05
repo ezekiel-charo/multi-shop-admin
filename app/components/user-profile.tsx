@@ -1,14 +1,10 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { CircleUserRound } from "lucide-react";
-import { getCurrentUser } from "~/services/auth-service";
+import { useUser } from "~/user-context";
 
 export default function UserProfile() {
-  const { data: user } = useQuery({
-    queryKey: ["current-user"],
-    queryFn: getCurrentUser,
-  });
+  const { user } = useUser();
 
   return (
     <>

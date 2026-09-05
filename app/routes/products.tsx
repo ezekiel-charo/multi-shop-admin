@@ -33,6 +33,7 @@ import {
 } from "~/types/constants";
 import type { PaginationParams } from "~/types/pagination-params";
 import type { Product } from "~/types/product";
+import { useUser } from "~/user-context";
 
 const defaultParams = {
   ...DEFAULT_PAGINATION_PARAMS,
@@ -56,6 +57,7 @@ const sortingOptions = [
 ];
 
 export default function Products() {
+  const { isAdmin } = useUser();
   const [searchParams, setSearchParams] = useSearchParams(defaultParams);
   const [productNameSearch, setProductNameSearch] = useState(
     () => searchParams.get("productName:contains") || "",
@@ -140,9 +142,11 @@ export default function Products() {
             items={sortingOptions}
             onSort={sortProducts}
           />
-          <Link to="add">
-            <Button>Add Product</Button>
-          </Link>
+          {isAdmin && (
+            <Link to="add">
+              <Button>Add Product</Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -185,10 +189,10 @@ export default function Products() {
                 <TableBodyRow key={product.id}>
                   <td>
                     <div className="flex gap-2">
-                      {product.productImage ? (
+                      {product.productImageUrl ? (
                         <img
                           className="size-10 rounded-md"
-                          src={product.productImage}
+                          src={product.productImageUrl}
                           alt={product.productName + " image"}
                         />
                       ) : (
@@ -223,18 +227,22 @@ export default function Products() {
                           <Link to={`view/${product.id}`}>
                             <DropdownMenuItem>View</DropdownMenuItem>
                           </Link>
-                          <Link to={`edit/${product.id}`}>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                          </Link>
-                          <DropdownMenuItem
-                            disabled={mutation.isPending}
-                            onClick={() => {
-                              setIsConfirming(product);
-                            }}
-                            variant="destructive"
-                          >
-                            Delete
-                          </DropdownMenuItem>
+                          {isAdmin && (
+                            <>
+                              <Link to={`edit/${product.id}`}>
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                              </Link>
+                              <DropdownMenuItem
+                                disabled={mutation.isPending}
+                                onClick={() => {
+                                  setIsConfirming(product);
+                                }}
+                                variant="destructive"
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </>
+                          )}
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>

@@ -25,6 +25,7 @@ import {
   InputGroupInput,
 } from "~/components/ui/input-group";
 import { getToken, login, setToken } from "~/services/auth-service";
+import { useUser } from "~/user-context";
 
 const loginFormSchema = z.object({
   email: z.email({ message: "Invalid email format" }),
@@ -34,6 +35,7 @@ const loginFormSchema = z.object({
 export default function Login() {
   const token = getToken();
   const navigate = useNavigate();
+  const { refreshUser } = useUser();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -49,6 +51,7 @@ export default function Login() {
     onSuccess: (loginResponse) => {
       // Save the token and navigate to the dashboard
       setToken(loginResponse.token);
+      refreshUser();
       navigate("/dashboard");
     },
   });

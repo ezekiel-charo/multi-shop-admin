@@ -2,12 +2,12 @@ import { Navigate, Outlet } from "react-router";
 import BottomMenu from "~/components/bottom-menu";
 import SideBar from "~/components/side-bar";
 import TopBar from "~/components/top-bar";
-import { getToken } from "~/services/auth-service";
+import { useUser } from "~/user-context";
 
 export default function MainLayout() {
-  const token = getToken();
+  const { user } = useUser();
 
-  if (!token) {
+  if (!user) {
     // Redirect to login page
     return <Navigate to="/login" replace />;
   }
