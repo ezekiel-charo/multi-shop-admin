@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { EllipsisVertical, SquareText } from "lucide-react";
+import { Building2, EllipsisVertical } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
@@ -184,12 +184,14 @@ export default function Shops() {
                           alt={shop.shopName + " logo"}
                         />
                       ) : (
-                        <SquareText className="size-10" />
+                        <Building2 className="size-10" />
                       )}
                       <div title={shop.description}>
-                        <div className="font-semibold text-black">
-                          {shop.shopName}
-                        </div>
+                        <Link to={`view/${shop.id}`}>
+                          <div className="font-semibold text-black cursor-pointer">
+                            {shop.shopName}
+                          </div>
+                        </Link>
                         <div className="max-w-50 text-nowrap overflow-hidden text-ellipsis">
                           {shop.description ? (
                             shop.description
@@ -218,8 +220,10 @@ export default function Shops() {
                       <DropdownMenuContent>
                         <DropdownMenuGroup>
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>View</DropdownMenuItem>
-                          <Link to={`/shops/edit/${shop.id}`}>
+                          <Link to={`view/${shop.id}`}>
+                            <DropdownMenuItem>View</DropdownMenuItem>
+                          </Link>
+                          <Link to={`edit/${shop.id}`}>
                             <DropdownMenuItem>Edit</DropdownMenuItem>
                           </Link>
                           <DropdownMenuItem

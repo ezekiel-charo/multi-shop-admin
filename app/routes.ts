@@ -13,6 +13,7 @@ export default [
     route("shops", "./routes/shops.tsx"),
     route("shops/add", "./routes/add-shop.tsx"),
     route("shops/edit/:shopId", "./routes/add-shop.tsx", { id: "edit-shop" }),
+    route("shops/view/:shopId", "./routes/view-shop.tsx"),
     route("products", "./routes/products.tsx"),
   ]),
 ] satisfies RouteConfig;
