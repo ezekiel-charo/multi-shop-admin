@@ -13,6 +13,11 @@ export async function getProducts(
   };
 }
 
+export async function getProductsBySku(sku: string): Promise<Product[]> {
+  const response = await api.get("products", { params: { sku } });
+  return response.data;
+}
+
 export async function getProduct(productId: string): Promise<Product> {
   const response = await api.get(`products/${productId}`);
   return mapProductWithDerivedFields(response.data);

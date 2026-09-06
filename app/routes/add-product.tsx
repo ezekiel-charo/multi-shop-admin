@@ -25,6 +25,7 @@ import { Textarea } from "~/components/ui/textarea";
 import {
   addProduct,
   getProduct,
+  getProductsBySku,
   updateProduct,
 } from "~/services/product-service";
 import { getShops } from "~/services/shop-service";
@@ -32,25 +33,55 @@ import { PRODUCT_CATEGORIES } from "~/types/constants";
 import { toast } from "../components/ui/toast";
 import type { Route } from "./+types/add-product";
 
-const productFormSchema = z.object({
-  productName: z.string().min(1, "Product name is required."),
-  sku: z.string().min(1, "SKU is required."),
-  shopId: z.string().min(1, "Shop is required."),
-  category: z.string().min(1, "Category is required."),
-  price: z.coerce
-    .number({ message: "Price is required." })
-    .gt(0, "Price must be greater than zero."),
-  stock: z.coerce
-    .number({ message: "Stock level is required." })
-    .int("Stock must be a whole number.")
-    .min(0, "Stock cannot be negative."),
-  description: z.string(),
-  productImageUrl: z.url({ message: "Invalid url" }).or(z.literal("")),
-  status: z.enum(["ACTIVE", "INACTIVE"]),
-});
+const createProductFormSchema = (productId?: string) =>
+  z
+    .object({
+      productName: z.string().min(1, "Product name is required."),
+      sku: z.string().min(1, "SKU is required."),
+      shopId: z.string().min(1, "Shop is required."),
+      category: z.string().min(1, "Category is required."),
+      price: z.coerce
+        .number({ message: "Price is required." })
+        .gt(0, "Price must be greater than zero."),
+      stock: z.coerce
+        .number({ message: "Stock level is required." })
+        .int("Stock must be a whole number.")
+        .min(0, "Stock cannot be negative."),
+      description: z.string(),
+      productImageUrl: z.url({ message: "Invalid url" }).or(z.literal("")),
+      status: z.enum(["ACTIVE", "INACTIVE"]),
+    })
+    .superRefine(async ({ sku }, context) => {
+      if (!sku.trim()) {
+        return;
+      }
 
-type ProductFormInput = z.input<typeof productFormSchema>;
-type ProductForm = z.output<typeof productFormSchema>;
+      try {
+        const products = await getProductsBySku(sku);
+        const hasDuplicate = products.some(
+          (existingProduct) => existingProduct.id !== productId,
+        );
+
+        if (hasDuplicate) {
+          context.addIssue({
+            code: "custom",
+            message: "A product with this SKU already exists.",
+            path: ["sku"],
+          });
+        }
+      } catch(e) {
+        console.log(e);
+        context.addIssue({
+          code: "custom",
+          message: "Unable to verify SKU. Please try again.",
+          path: ["sku"],
+        });
+      }
+    });
+
+type ProductFormSchema = ReturnType<typeof createProductFormSchema>;
+type ProductFormInput = z.input<ProductFormSchema>;
+type ProductForm = z.output<ProductFormSchema>;
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const shops = await getShops(new URLSearchParams({ _page: "-1" }));
@@ -64,6 +95,7 @@ export default function AddProduct({
   loaderData: { shops, product },
 }: Route.ComponentProps) {
   const isEditing = !!product;
+  const productFormSchema = createProductFormSchema(product?.id);
 
   const navigate = useNavigate();
 
