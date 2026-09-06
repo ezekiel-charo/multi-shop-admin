@@ -25,7 +25,7 @@ export default function ProductStockStatusChart({
   data,
 }: ProductStockStatusChartProps) {
   const chartData = [
-    { status: "In Stock", products: data?.totalStock },
+    { status: "In Stock", products: data?.totalProducts },
     { status: "Low Stock", products: data?.numLowStockProducts },
     { status: "Out of Stock", products: data?.numOutOfStockProducts },
   ];
@@ -36,7 +36,7 @@ export default function ProductStockStatusChart({
         Product Stock Status
       </div>
       <div className="text-gray-500 text-xs">
-        Number of product units per stock status
+        Number of product per stock status
       </div>
       <ChartContainer config={chartConfig}>
         <BarChart
