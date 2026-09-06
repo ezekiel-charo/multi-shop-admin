@@ -239,7 +239,9 @@ export default function Shops() {
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                               </Link>
                               <DropdownMenuItem
-                                disabled={mutation.isPending}
+                                disabled={
+                                  mutation.isPending || shop.numProducts > 0
+                                }
                                 onClick={() => {
                                   setIsConfirming(shop);
                                 }}
