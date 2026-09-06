@@ -1,14 +1,9 @@
+import type { Location } from "react-router";
 import type { User } from "~/types/user";
-
-interface RouteLocation {
-  pathname: string;
-  search: string;
-  hash: string;
-}
 
 export function getProtectedRouteRedirect(
   user: User | null,
-  location: RouteLocation,
+  location: Location,
   adminOnly = false,
 ) {
   if (!user) {

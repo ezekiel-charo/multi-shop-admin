@@ -3,12 +3,13 @@ import {
   getLoginRedirectDestination,
   getProtectedRouteRedirect,
 } from "./route-protection";
+import type { Location } from "react-router";
 
 const location = {
   pathname: "/products/edit/42",
   search: "?tab=details",
   hash: "#pricing",
-};
+} as Location;
 
 const administrator = {
   email: "admin@example.com",
@@ -35,7 +36,7 @@ describe("protected route redirects", () => {
 
   it("restores the attempted URL from an encoded login redirect", () => {
     const redirect = getProtectedRouteRedirect(null, location, true);
-    expect(getLoginRedirectDestination(redirect.split("?")[1])).toBe(
+    expect(getLoginRedirectDestination(redirect!.split("?")[1])).toBe(
       "/products/edit/42?tab=details#pricing",
     );
   });
@@ -52,9 +53,9 @@ describe("protected route redirects", () => {
 
   it("falls back to the dashboard for missing or unsafe redirects", () => {
     expect(getLoginRedirectDestination("")).toBe("/dashboard");
-    expect(getLoginRedirectDestination("redirect=https%3A%2F%2Fevil.example")).toBe(
-      "/dashboard",
-    );
+    expect(
+      getLoginRedirectDestination("redirect=https%3A%2F%2Fevil.example"),
+    ).toBe("/dashboard");
     expect(getLoginRedirectDestination("redirect=%2F%2Fevil.example")).toBe(
       "/dashboard",
     );
