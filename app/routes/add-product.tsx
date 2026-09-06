@@ -49,7 +49,8 @@ const productFormSchema = z.object({
   status: z.enum(["ACTIVE", "INACTIVE"]),
 });
 
-type ProductForm = z.infer<typeof productFormSchema>;
+type ProductFormInput = z.input<typeof productFormSchema>;
+type ProductForm = z.output<typeof productFormSchema>;
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const shops = await getShops(new URLSearchParams({ _page: "-1" }));
@@ -66,7 +67,7 @@ export default function AddProduct({
 
   const navigate = useNavigate();
 
-  const form = useForm<ProductForm>({
+  const form = useForm<ProductFormInput, unknown, ProductForm>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       productName: "",
@@ -189,7 +190,12 @@ export default function AddProduct({
                       id="product-shop"
                       aria-invalid={fieldState.invalid}
                     >
-                      <SelectValue placeholder="Select shop" />
+                      <SelectValue placeholder="Select shop">
+                        {(value) =>
+                          shops.data.find((shop) => shop.id === value)
+                            ?.shopName ?? "Select shop"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {shops.data.map((shop) => (
@@ -218,7 +224,13 @@ export default function AddProduct({
                       id="product-category"
                       aria-invalid={fieldState.invalid}
                     >
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder="Select category">
+                        {(value) =>
+                          PRODUCT_CATEGORIES.find(
+                            (category) => category.value === value,
+                          )?.label ?? "Select category"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {PRODUCT_CATEGORIES.map((category) => (
@@ -243,6 +255,7 @@ export default function AddProduct({
                   <FieldLabel htmlFor="product-price">Price</FieldLabel>
                   <Input
                     {...field}
+                    value={String(field.value ?? "")}
                     id="product-price"
                     type="number"
                     step="0.01"
@@ -265,6 +278,7 @@ export default function AddProduct({
                   <FieldLabel htmlFor="product-stock">Stock Level</FieldLabel>
                   <Input
                     {...field}
+                    value={String(field.value ?? "")}
                     id="product-stock"
                     type="number"
                     min="0"
@@ -312,7 +326,15 @@ export default function AddProduct({
                       id="product-status"
                       aria-invalid={fieldState.invalid}
                     >
-                      <SelectValue placeholder="Select status" />
+                      <SelectValue placeholder="Select status">
+                        {(value) =>
+                          value === "ACTIVE"
+                            ? "Active"
+                            : value === "INACTIVE"
+                              ? "Inactive"
+                              : "Select status"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ACTIVE">Active</SelectItem>
