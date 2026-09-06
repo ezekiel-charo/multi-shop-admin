@@ -113,7 +113,7 @@ export default function AddShop({ loaderData: shop }: Route.ComponentProps) {
         onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
       >
         <FieldGroup>
-          <FieldGroup className="grid grid-cols-2">
+          <FieldGroup className="lg:grid lg:grid-cols-2">
             <Controller
               name="shopName"
               control={form.control}
