@@ -1,4 +1,5 @@
 import { debounce } from "~/lib/utils";
+import { useMemo, useRef } from "react";
 import { Input } from "./ui/input";
 
 interface SearchProps {
@@ -14,7 +15,13 @@ export default function Search({
   onChange,
   onSearch,
 }: SearchProps) {
-  const debouncedSearch = debounce(onSearch, 500);
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
+
+  const debouncedSearch = useMemo(
+    () => debounce((searchStr: string) => onSearchRef.current(searchStr), 500),
+    [],
+  );
 
   return (
     <>
