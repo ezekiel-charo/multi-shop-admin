@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, Store } from "lucide-react";
+import { LayoutDashboard, LogOut, Package, Store } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useUser } from "~/user-context";
 import Logo from "./logo";
@@ -43,6 +43,7 @@ export default function SideBar() {
             variant="destructive"
             className="w-full h-12"
           >
+            <LogOut />
             Log out
           </Button>
         </div>
