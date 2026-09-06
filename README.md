@@ -201,6 +201,7 @@ The administrator can access create and edit routes. The viewer can access the r
 
 ## Future improvements
 
+- Restructure schema to allow a product to belong to multiple shops with independet the inventory tracking for each shop
 - Add a typed backend API and schema validation shared between client and server.
 - Move API configuration to environment variables with separate development, staging, and production values.
 - Add refreshable, short-lived sessions and centralized permission checks.
@@ -228,5 +229,3 @@ Build and run the production container with:
 docker build -t multi-shop-admin .
 docker run --rm -p 3000:3000 multi-shop-admin
 ```
-
-For a production deployment, provide a real backend API and configure its URL through the deployment environment rather than relying on the current source-level constant.
