@@ -70,7 +70,7 @@ const stockStatusOptions = [
 export default function Products() {
   const { isAdmin } = useUser();
   const [searchParams, setSearchParams] = useSearchParams(defaultParams);
-  const [productNameSearch, setProductNameSearch] = useState(
+  const [productSearch, setProductSearch] = useState(
     () => searchParams.get("productName:contains") || "",
   );
 
@@ -113,13 +113,16 @@ export default function Products() {
     },
   });
 
-  function searchByProductName(productName: string) {
+  function searchProduct(productNameOrSku: string) {
     const params = new URLSearchParams(searchParams);
 
-    if (productName) {
-      params.set("productName:contains", productName);
+    if (productNameOrSku) {
+      params.set(
+        "_where",
+        `{"or":[{"productName":{"contains":"${productNameOrSku}"}}, {"sku":{"contains":"${productNameOrSku}"}}]}`,
+      );
     } else {
-      params.delete("productName:contains");
+      params.delete("_where");
     }
 
     params.set("_page", "1"); // Reset pagination
@@ -173,10 +176,10 @@ export default function Products() {
     <>
       <div className="flex flex-col lg:flex-row justify-between gap-4 mb-4">
         <Search
-          placeholder="Type product name to search"
-          value={productNameSearch}
-          onChange={setProductNameSearch}
-          onSearch={searchByProductName}
+          placeholder="Type product name or SKU to search"
+          value={productSearch}
+          onChange={setProductSearch}
+          onSearch={searchProduct}
         />
         <div className="flex flex-col *:w-full lg:*:w-fit *:text-end items-end lg:flex-row lg:items-center gap-2">
           <ProductFilterSelect
