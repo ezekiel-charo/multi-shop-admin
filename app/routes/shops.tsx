@@ -215,9 +215,9 @@ export default function Shops() {
                     </div>
                   </td>
                   <td>{formatDate(shop.createdAt, "dd/MM/yyyy")}</td>
-                  <td>{formatNumber(shop.numProducts)}</td>
-                  <td>{formatNumber(shop.totalStock)}</td>
-                  <td>{formatNumber(shop.totalInventoryValue)}</td>
+                  <td className="text-end pe-18!">{formatNumber(shop.numProducts)}</td>
+                  <td className="text-end pe-18!">{formatNumber(shop.totalStock)}</td>
+                  <td className="text-end pe-18!">{formatNumber(shop.totalInventoryValue)}</td>
                   <td>
                     <DropdownMenu>
                       <DropdownMenuTrigger

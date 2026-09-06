@@ -10,6 +10,8 @@ import ErrorState from "~/components/error-state";
 import Paginator from "~/components/paginator";
 import Search from "~/components/search";
 import Sort from "~/components/sort";
+import StatusBadge from "~/components/status-badge";
+import StockStatusBadge from "~/components/stock-status-badge";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
 import TableHeadRow from "~/components/table-head-row";
@@ -23,7 +25,6 @@ import {
 } from "~/types/constants";
 import type { PaginationParams } from "~/types/pagination-params";
 import type { Route } from "./+types/view-shop";
-import { Badge } from "~/components/ui/badge";
 
 const sortingOptions = [
   { label: "Product Name", value: "productName" },
@@ -111,14 +112,7 @@ export default function ViewShop({ loaderData: shop }: Route.ComponentProps) {
           <div className="flex flex-col gap-1">
             <div className="font-semibold text-black text-lg">
               {shop?.shopName}
-              <Badge
-                className="ms-2"
-                variant={
-                  shop?.status === "ACTIVE" ? "secondary" : "destructive"
-                }
-              >
-                {shop?.status}
-              </Badge>
+              <StatusBadge status={shop?.status || "INACTIVE"} />
             </div>
 
             <div className="text-sm">
@@ -144,10 +138,6 @@ export default function ViewShop({ loaderData: shop }: Route.ComponentProps) {
             <tr>
               <td>Total Inventory Value</td>
               <td>{formatNumber(shop?.totalInventoryValue)}</td>
-            </tr>
-            <tr>
-              <td>Total Products</td>
-              <td>{formatNumber(shop?.numProducts)}</td>
             </tr>
           </tbody>
         </table>
@@ -212,12 +202,14 @@ export default function ViewShop({ loaderData: shop }: Route.ComponentProps) {
                     >
                       {product.productName}
                     </Link>
-                    <div className="xs">SKU {product.sku}</div>
+                    <div className="text-xs">SKU: {product.sku}</div>
                   </td>
                   <td>{product.category}</td>
                   <td className="text-end">{formatNumber(product.price)}</td>
                   <td>{formatNumber(product.stock)}</td>
-                  <td>{product.stockStatus}</td>
+                  <td>
+                    <StockStatusBadge product={product} />
+                  </td>
                   <td>{formatDate(product.lastUpdatedAt, "dd/MM/yyyy")}</td>
                 </TableBodyRow>
               ))}

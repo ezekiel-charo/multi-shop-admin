@@ -5,6 +5,7 @@ import { formatDate } from "date-fns";
 import { Building2, EllipsisVertical, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
+import StatusBadge from "~/components/status-badge";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
@@ -12,10 +13,10 @@ import Paginator from "~/components/paginator";
 import ProductFilterSelect from "~/components/product-filter-select";
 import Search from "~/components/search";
 import Sort from "~/components/sort";
+import StockStatusBadge from "~/components/stock-status-badge";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
 import TableHeadRow from "~/components/table-head-row";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -270,16 +271,7 @@ export default function Products() {
                       <div>
                         <div className="font-semibold text-black mb-1">
                           {product.productName}
-                          <Badge
-                            className="ms-2 py-0"
-                            variant={
-                              product.status === "ACTIVE"
-                                ? "secondary"
-                                : "destructive"
-                            }
-                          >
-                            {product.status}
-                          </Badge>
+                          <StatusBadge status={product.status} />
                         </div>
                         <div className="text-xs">SKU: {product.sku}</div>
                       </div>
@@ -288,8 +280,10 @@ export default function Products() {
                   <td>{product.shop.shopName}</td>
                   <td>{product.category}</td>
                   <td className="text-end">{formatNumber(product.price)}</td>
-                  <td>{formatNumber(product.stock)}</td>
-                  <td>{product.stockStatus}</td>
+                  <td className="text-end">{formatNumber(product.stock)}</td>
+                  <td>
+                    <StockStatusBadge product={product} />
+                  </td>
                   <td>{formatDate(product.lastUpdatedAt, "dd/MM/yyyy")}</td>
                   <td>
                     <DropdownMenu>

@@ -12,8 +12,10 @@ export async function getShops(params: URLSearchParams): Promise<Page<Shop>> {
 }
 
 export async function getShop(shopId: string): Promise<Shop> {
-  const response = await api.get(`shops/${shopId}`);
-  return response.data;
+  const response = await api.get(`shops/${shopId}`, {
+    params: { _embed: "products" },
+  });
+  return mapShopWithDerivedFields(response.data);
 }
 
 export async function addShop(shop: Partial<Shop>): Promise<Shop> {
@@ -22,7 +24,7 @@ export async function addShop(shop: Partial<Shop>): Promise<Shop> {
     createdAt: Date.now(),
     lastUpdatedAt: Date.now(),
   });
-  return mapShopWithDerivedFields(response.data);
+  return response.data;
 }
 
 export async function updateShop(
@@ -33,7 +35,7 @@ export async function updateShop(
     ...shop,
     lastUpdatedAt: Date.now(),
   });
-  return mapShopWithDerivedFields(response.data);
+  return response.data;
 }
 
 export async function deleteShop(shopId: string): Promise<Shop> {
