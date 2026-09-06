@@ -281,7 +281,7 @@ export default function Products() {
                             {product.status}
                           </Badge>
                         </div>
-                        <div className="xs">SKU: {product.sku}</div>
+                        <div className="text-xs">SKU: {product.sku}</div>
                       </div>
                     </div>
                   </td>
