@@ -50,7 +50,16 @@ export async function getCurrentUser(): Promise<User> {
 
 export function getCurrentUserFromToken(): User | null {
   const token = getToken();
-  return token ? (demoUsers[token] ?? null) : null;
+  if (!token) {
+    return null;
+  }
+
+  const user = demoUsers[token];
+  if (!user) {
+    removeToken();
+  }
+
+  return user ?? null;
 }
 
 export async function logout() {
@@ -72,5 +81,5 @@ export function removeToken() {
 }
 
 export function isAuthenticated() {
-  return !!getToken();
+  return getCurrentUserFromToken() !== null;
 }
