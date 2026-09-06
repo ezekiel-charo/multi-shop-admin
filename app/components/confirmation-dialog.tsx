@@ -1,4 +1,5 @@
 import { Trash2Icon } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +16,7 @@ interface ConfirmationDialogProps {
   open?: boolean;
   pending?: boolean;
   dialogTitle: string;
-  description: string;
+  description: string | ReactNode;
   onOpenChange: (open: boolean) => void;
 }
 

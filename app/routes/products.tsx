@@ -79,7 +79,7 @@ export default function Products() {
     queryFn: () => getShops(new URLSearchParams({ _page: "-1" })),
   });
 
-  const [isConfirming, setIsConfirming] = useState<Product | null>();
+  const [productToDelete, setProductToDelete] = useState<Product | null>();
 
   const {
     data: page,
@@ -95,9 +95,16 @@ export default function Products() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: deleteProduct,
+    mutationFn: () => {
+      if (productToDelete) {
+        return deleteProduct(productToDelete?.id);
+      }
+      throw new Error("An unexpected error occured");
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({
+        queryKey: ["products", searchParams.toString()],
+      });
       toast.add({
         title: "Product deleted",
         description: "Product deleted successfully",
@@ -311,7 +318,7 @@ export default function Products() {
                               <DropdownMenuItem
                                 disabled={mutation.isPending}
                                 onClick={() => {
-                                  setIsConfirming(product);
+                                  setProductToDelete(product);
                                 }}
                                 variant="destructive"
                               >
@@ -323,15 +330,15 @@ export default function Products() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <ConfirmationDialog
-                      open={!!isConfirming}
+                      open={!!productToDelete}
                       pending={mutation.isPending}
-                      dialogTitle={`Delete ${isConfirming?.productName}?`}
+                      dialogTitle={`Delete ${productToDelete?.productName}?`}
                       description="This action cannot be undone"
                       onOpenChange={(confirmed) => {
                         if (confirmed) {
-                          mutation.mutate(product.id);
+                          mutation.mutate();
                         }
-                        setIsConfirming(null);
+                        setProductToDelete(null);
                       }}
                     />
                   </td>

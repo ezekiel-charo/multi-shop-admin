@@ -63,7 +63,7 @@ export default function Shops() {
     () => searchParams.get("shopName:contains") || "",
   );
 
-  const [isConfirming, setIsConfirming] = useState<Shop | null>();
+  const [shopToDelete, setShopToDelete] = useState<Shop | null>();
 
   const {
     data: page,
@@ -79,9 +79,16 @@ export default function Shops() {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: deleteShop,
+    mutationFn: () => {
+      if (shopToDelete) {
+        return deleteShop(shopToDelete?.id);
+      }
+      throw new Error("An unexpected error occured");
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["shops"] });
+      queryClient.invalidateQueries({
+        queryKey: ["shops", searchParams.toString()],
+      });
       toast.add({
         title: "Shop deleted",
         description: "Shop deleted successfully",
@@ -215,9 +222,15 @@ export default function Shops() {
                     </div>
                   </td>
                   <td>{formatDate(shop.createdAt, "dd/MM/yyyy")}</td>
-                  <td className="text-end pe-18!">{formatNumber(shop.numProducts)}</td>
-                  <td className="text-end pe-18!">{formatNumber(shop.totalStock)}</td>
-                  <td className="text-end pe-18!">{formatNumber(shop.totalInventoryValue)}</td>
+                  <td className="text-end pe-18!">
+                    {formatNumber(shop.numProducts)}
+                  </td>
+                  <td className="text-end pe-18!">
+                    {formatNumber(shop.totalStock)}
+                  </td>
+                  <td className="text-end pe-18!">
+                    {formatNumber(shop.totalInventoryValue)}
+                  </td>
                   <td>
                     <DropdownMenu>
                       <DropdownMenuTrigger
@@ -239,11 +252,9 @@ export default function Shops() {
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                               </Link>
                               <DropdownMenuItem
-                                disabled={
-                                  mutation.isPending || shop.numProducts > 0
-                                }
+                                disabled={mutation.isPending}
                                 onClick={() => {
-                                  setIsConfirming(shop);
+                                  setShopToDelete(shop);
                                 }}
                                 variant="destructive"
                               >
@@ -255,15 +266,40 @@ export default function Shops() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                     <ConfirmationDialog
-                      open={!!isConfirming}
-                      pending={mutation.isPending}
-                      dialogTitle={`Delete ${isConfirming?.shopName}?`}
-                      description="This action cannot be undone"
+                      open={!!shopToDelete}
+                      pending={
+                        mutation.isPending || !!shopToDelete?.numProducts
+                      }
+                      dialogTitle={
+                        shopToDelete?.numProducts
+                          ? `Not allowed!`
+                          : `Delete ${shopToDelete?.shopName}?`
+                      }
+                      description={
+                        shopToDelete?.numProducts ? (
+                          <>
+                            You cannot delete
+                            <span className="font-bold px-1 text-black">
+                              {shopToDelete.shopName}
+                            </span>
+                            because it has products.
+                            <Link
+                              to={`/shops/view/${shopToDelete.id}`}
+                              className="text-sky-700"
+                            >
+                              Click here to view the {shopToDelete.shopName}'s
+                              products
+                            </Link>
+                          </>
+                        ) : (
+                          "This action cannot be undone"
+                        )
+                      }
                       onOpenChange={(confirmed) => {
                         if (confirmed) {
-                          mutation.mutate(shop.id);
+                          mutation.mutate();
                         }
-                        setIsConfirming(null);
+                        setShopToDelete(null);
                       }}
                     />
                   </td>
