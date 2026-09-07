@@ -20,7 +20,7 @@ export interface Product {
   sku: string;
   shop: Shop;
   shopId: string;
-  category: "FOODSTUFF" | "OTHER";
+  category: "FOOD" | "OTHER";
   price: number;
   stock: number;
   stockStatus: StockStatus;

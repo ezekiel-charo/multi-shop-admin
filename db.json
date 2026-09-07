@@ -1,4 +1,34 @@
 {
+  "dashboard": {
+    "numLowStockProducts": 5,
+    "numOutOfStockProducts": 2,
+    "totalInventoryValue": 53200900,
+    "totalProducts": 120,
+    "totalShops": 254,
+    "totalStock": 13402,
+    "topShops": [
+      {
+        "inventoryValue": 1243000,
+        "shopName": "Big Retail Shop"
+      },
+      {
+        "inventoryValue": 320000,
+        "shopName": "Relax Corner Store"
+      },
+      {
+        "inventoryValue": 670000,
+        "shopName": "Ever-open 24h Shop"
+      },
+      {
+        "inventoryValue": 530000,
+        "shopName": "Late Night Retail"
+      },
+      {
+        "inventoryValue": 123000,
+        "shopName": "Neighbourly Shop"
+      }
+    ]
+  },
   "shops": [
     {
       "shopName": "Corner store",
@@ -128,13 +158,14 @@
       "shopId": "0yfj_fdMfZA",
       "category": "FOOD",
       "price": 120,
-      "stock": 90,
+      "stock": 0,
       "description": "",
       "productImageUrl": "",
       "status": "ACTIVE",
       "createdAt": 1788644894880,
-      "lastUpdatedAt": 1788644894880,
-      "id": "Kv4-B0uo2-k"
+      "lastUpdatedAt": 1788690113564,
+      "id": "Kv4-B0uo2-k",
+      "stockStatus": "IN_STOCK"
     },
     {
       "productName": "Kiberiti",
@@ -142,13 +173,14 @@
       "shopId": "Ou6cjgp3lrY",
       "category": "OTHER",
       "price": 5,
-      "stock": 2000,
+      "stock": 4,
       "description": "",
       "productImageUrl": "",
       "status": "ACTIVE",
       "createdAt": 1788645209069,
-      "lastUpdatedAt": 1788645209069,
-      "id": "U4cRfOUs51k"
+      "lastUpdatedAt": 1788690007487,
+      "id": "U4cRfOUs51k",
+      "stockStatus": "IN_STOCK"
     },
     {
       "productName": "Indomie",
@@ -199,13 +231,14 @@
       "sku": "MILK500ML002",
       "shopId": "0yfj_fdMfZA",
       "price": 65,
-      "stock": 18,
+      "stock": 0,
       "stockStatus": "IN_STOCK",
-      "lastUpdatedAt": 1788646000000,
+      "lastUpdatedAt": 1788690127375,
       "createdAt": 1788646000000,
       "status": "ACTIVE",
       "category": "Dairy",
-      "id": "Xf5Kgmdf1Fw"
+      "id": "Xf5Kgmdf1Fw",
+      "description": ""
     },
     {
       "productImageUrl": "",
@@ -271,13 +304,14 @@
       "sku": "RICE2KG005",
       "shopId": "QAdHqdbPq4g",
       "price": 360,
-      "stock": 15,
-      "stockStatus": "IN_STOCK",
-      "lastUpdatedAt": 1788646000000,
+      "stock": 5,
+      "stockStatus": "LOW_STOCK",
+      "lastUpdatedAt": 1788690040964,
       "createdAt": 1788646000000,
       "status": "ACTIVE",
       "category": "Food",
-      "id": "aOmhtjRsyL0"
+      "id": "aOmhtjRsyL0",
+      "description": ""
     },
     {
       "productImageUrl": "https://images.unsplash.com/photo-1589927986089-35812388d1f4",
@@ -285,13 +319,14 @@
       "sku": "ROYCO006",
       "shopId": "QAdHqdbPq4g",
       "price": 75,
-      "stock": 51,
+      "stock": 0,
       "stockStatus": "IN_STOCK",
-      "lastUpdatedAt": 1788646000000,
+      "lastUpdatedAt": 1788689938416,
       "createdAt": 1788646000000,
       "status": "ACTIVE",
       "category": "Food",
-      "id": "v2q74kd72_c"
+      "id": "v2q74kd72_c",
+      "description": ""
     },
     {
       "productImageUrl": "https://images.unsplash.com/photo-1601050690597-df0568f70950",
@@ -327,13 +362,14 @@
       "sku": "KIBERITI016",
       "shopId": "kCqAVga_Tnw",
       "price": 23,
-      "stock": 105,
+      "stock": 5,
       "stockStatus": "IN_STOCK",
-      "lastUpdatedAt": 1788646000000,
+      "lastUpdatedAt": 1788690059821,
       "createdAt": 1788646000000,
       "status": "ACTIVE",
       "category": "Household",
-      "id": "ZOOpfVpFydE"
+      "id": "ZOOpfVpFydE",
+      "description": ""
     },
     {
       "productImageUrl": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35",
@@ -728,5 +764,6 @@
       "id": "pZvd19XRyC4"
     }
   ],
+  "adjustments": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
