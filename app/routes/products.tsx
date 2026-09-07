@@ -2,17 +2,18 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { Building2, EllipsisVertical, X } from "lucide-react";
+import { EllipsisVertical, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
-import StatusBadge from "~/components/status-badge";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
+import Image from "~/components/image";
 import Paginator from "~/components/paginator";
 import ProductFilterSelect from "~/components/product-filter-select";
 import Search from "~/components/search";
 import Sort from "~/components/sort";
+import StatusBadge from "~/components/status-badge";
 import StockStatusBadge from "~/components/stock-status-badge";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
@@ -269,15 +270,11 @@ export default function Products() {
                 <TableBodyRow key={product.id}>
                   <td>
                     <div className="flex gap-2">
-                      {product.productImageUrl ? (
-                        <img
-                          className="size-10 rounded-md"
-                          src={product.productImageUrl}
-                          alt={product.productName + " image"}
-                        />
-                      ) : (
-                        <Building2 className="size-10" />
-                      )}
+                      <Image
+                        className="size-10 rounded-md"
+                        src={product.productImageUrl}
+                        alt={product.productName + " image"}
+                      />
                       <div>
                         <div className="font-semibold text-black mb-1">
                           {product.productName}

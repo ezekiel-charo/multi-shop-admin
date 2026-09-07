@@ -2,11 +2,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { Building2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import EmptyState from "~/components/empty-state";
 import ErrorState from "~/components/error-state";
+import Image from "~/components/image";
 import Paginator from "~/components/paginator";
 import Search from "~/components/search";
 import Sort from "~/components/sort";
@@ -99,15 +99,12 @@ export default function ViewShop({ loaderData: shop }: Route.ComponentProps) {
     <>
       <div className="grid lg:grid-cols-2 gap-8 pb-8 mb-4 border-b border-b-gray-100 ">
         <div className="flex gap-4">
-          {shop?.logoUrl ? (
-            <img
-              className="size-24 rounded-md"
-              src={shop.logoUrl}
-              alt={shop.shopName + " logo"}
-            />
-          ) : (
-            <Building2 className="size-24" />
-          )}
+          <Image
+            className="size-24 rounded-md"
+            src={shop?.logoUrl}
+            fallbackImageUrl="/shop-placeholder.svg"
+            alt={shop?.shopName + " logo"}
+          />
 
           <div className="flex flex-col gap-1">
             <div className="font-semibold text-black text-lg">
