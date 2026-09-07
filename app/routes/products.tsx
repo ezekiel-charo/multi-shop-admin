@@ -14,6 +14,7 @@ import ProductFilterSelect from "~/components/product-filter-select";
 import Search from "~/components/search";
 import Sort from "~/components/sort";
 import StatusBadge from "~/components/status-badge";
+import StockAdjustmentDialog from "~/components/stock-adjustment-dialog";
 import StockStatusBadge from "~/components/stock-status-badge";
 import Table from "~/components/table";
 import TableBodyRow from "~/components/table-body-row";
@@ -81,6 +82,7 @@ export default function Products() {
   });
 
   const [productToDelete, setProductToDelete] = useState<Product | null>();
+  const [productToAdjust, setProductToAdjust] = useState<Product | null>();
 
   const {
     data: page,
@@ -104,7 +106,7 @@ export default function Products() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["products", searchParams.toString()],
+        queryKey: ["products"],
       });
       toast.add({
         title: "Product deleted",
@@ -317,6 +319,11 @@ export default function Products() {
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                               </Link>
                               <DropdownMenuItem
+                                onClick={() => setProductToAdjust(product)}
+                              >
+                                Adjust stock
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
                                 disabled={mutation.isPending}
                                 onClick={() => {
                                   setProductToDelete(product);
@@ -330,23 +337,34 @@ export default function Products() {
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    <ConfirmationDialog
-                      open={!!productToDelete}
-                      pending={mutation.isPending}
-                      dialogTitle={`Delete ${productToDelete?.productName}?`}
-                      description="This action cannot be undone"
-                      onOpenChange={(confirmed) => {
-                        if (confirmed) {
-                          mutation.mutate();
-                        }
-                        setProductToDelete(null);
-                      }}
-                    />
                   </td>
                 </TableBodyRow>
               ))}
             </tbody>
           </Table>
+
+          <StockAdjustmentDialog
+            open={!!productToAdjust}
+            product={productToAdjust}
+            onOpenChange={(open) => {
+              if (!open) {
+                setProductToAdjust(null);
+              }
+            }}
+          />
+
+          <ConfirmationDialog
+            open={!!productToDelete}
+            pending={mutation.isPending}
+            dialogTitle={`Delete ${productToDelete?.productName}?`}
+            description="This action cannot be undone"
+            onOpenChange={(confirmed) => {
+              if (confirmed) {
+                mutation.mutate();
+              }
+              setProductToDelete(null);
+            }}
+          />
         </>
       )}
     </>

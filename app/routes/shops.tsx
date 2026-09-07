@@ -265,48 +265,46 @@ export default function Shops() {
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                    <ConfirmationDialog
-                      open={!!shopToDelete}
-                      pending={
-                        mutation.isPending || !!shopToDelete?.numProducts
-                      }
-                      dialogTitle={
-                        shopToDelete?.numProducts
-                          ? `Not allowed!`
-                          : `Delete ${shopToDelete?.shopName}?`
-                      }
-                      description={
-                        shopToDelete?.numProducts ? (
-                          <>
-                            You cannot delete
-                            <span className="font-bold px-1 text-black">
-                              {shopToDelete.shopName}
-                            </span>
-                            because it has products.
-                            <Link
-                              to={`/shops/view/${shopToDelete.id}`}
-                              className="text-sky-700"
-                            >
-                              Click here to view the {shopToDelete.shopName}'s
-                              products
-                            </Link>
-                          </>
-                        ) : (
-                          "This action cannot be undone"
-                        )
-                      }
-                      onOpenChange={(confirmed) => {
-                        if (confirmed) {
-                          mutation.mutate();
-                        }
-                        setShopToDelete(null);
-                      }}
-                    />
                   </td>
                 </TableBodyRow>
               ))}
             </tbody>
           </Table>
+
+          <ConfirmationDialog
+            open={!!shopToDelete}
+            pending={mutation.isPending || !!shopToDelete?.numProducts}
+            dialogTitle={
+              shopToDelete?.numProducts
+                ? `Not allowed!`
+                : `Delete ${shopToDelete?.shopName}?`
+            }
+            description={
+              shopToDelete?.numProducts ? (
+                <>
+                  You cannot delete
+                  <span className="font-bold px-1 text-black">
+                    {shopToDelete.shopName}
+                  </span>
+                  because it has products.
+                  <Link
+                    to={`/shops/view/${shopToDelete.id}`}
+                    className="text-sky-700"
+                  >
+                    Click here to view the {shopToDelete.shopName}'s products
+                  </Link>
+                </>
+              ) : (
+                "This action cannot be undone"
+              )
+            }
+            onOpenChange={(confirmed) => {
+              if (confirmed) {
+                mutation.mutate();
+              }
+              setShopToDelete(null);
+            }}
+          />
         </>
       )}
     </>

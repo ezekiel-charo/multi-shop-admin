@@ -1,27 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { ArrowLeft, Pencil, Wrench } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import Image from "~/components/image";
 import StatusBadge from "~/components/status-badge";
+import StockAdjustmentDialog from "~/components/stock-adjustment-dialog";
 import StockStatusBadge from "~/components/stock-status-badge";
 import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "~/components/ui/dialog";
-import { Field, FieldError, FieldLabel } from "~/components/ui/field";
-import { Input } from "~/components/ui/input";
-import { Textarea } from "~/components/ui/textarea";
-import { toast } from "~/components/ui/toast";
 import { formatNumber } from "~/lib/utils";
-import { adjustProductStock, getProduct } from "~/services/product-service";
-import type { InventoryAdjustment, Product } from "~/types/product";
+import { getProduct } from "~/services/product-service";
+import type { Product } from "~/types/product";
 import { useUser } from "~/user-context";
 import type { Route } from "./+types/view-product";
 
@@ -32,88 +20,13 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 export default function ViewProduct({ loaderData }: Route.ComponentProps) {
-  const { isAdmin, user } = useUser();
+  const { isAdmin } = useUser();
   const [product, setProduct] = useState<Product | null>(loaderData);
   const [isAdjustingStock, setIsAdjustingStock] = useState(false);
-  const [quantity, setQuantity] = useState("");
-  const [reason, setReason] = useState("");
-  const [validationError, setValidationError] = useState("");
-  const queryClient = useQueryClient();
-
-  const adjustmentMutation = useMutation({
-    mutationFn: async () => {
-      if (!product) throw new Error("Product not found");
-
-      const adjustmentQuantity = Number(quantity);
-      if (!Number.isInteger(adjustmentQuantity) || adjustmentQuantity === 0) {
-        throw new Error("Enter a non-zero whole number.");
-      }
-
-      const newStock = product.stock + adjustmentQuantity;
-      if (newStock < 0) {
-        throw new Error("Stock cannot be negative.");
-      }
-
-      const adjustment: InventoryAdjustment = {
-        productId: product.id,
-        id: crypto.randomUUID(),
-        quantity: adjustmentQuantity,
-        previousStock: product.stock,
-        newStock,
-        reason: reason.trim() || "Stock adjustment",
-        adjustedAt: Date.now(),
-        adjustedBy: user?.name || "Administrator",
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { shop, adjustments, ...cleanProduct } = product;
-
-      return adjustProductStock(
-        { ...cleanProduct, stock: newStock } as Product,
-        adjustment,
-      );
-    },
-    onSuccess: (updatedProduct) => {
-      if (!product) return;
-
-      setProduct({ ...updatedProduct, shop: product.shop });
-      setQuantity("");
-      setReason("");
-      setValidationError("");
-      setIsAdjustingStock(false);
-      queryClient.invalidateQueries({ queryKey: ["adjustments"] });
-      toast.add({
-        title: "Stock updated",
-        description: "The products stock was adjusted successfully",
-        type: "success",
-      });
-    },
-    onError: (error) => {
-      setValidationError(error.message);
-    },
-  });
 
   if (!product) return null;
 
   const adjustments = product.adjustments;
-
-  function openAdjustmentDialog() {
-    setValidationError("");
-    setIsAdjustingStock(true);
-  }
-
-  function closeAdjustmentDialog(open: boolean) {
-    if (!open && !adjustmentMutation.isPending) {
-      setIsAdjustingStock(false);
-      setValidationError("");
-    }
-  }
-
-  function submitAdjustment(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setValidationError("");
-    adjustmentMutation.mutate();
-  }
 
   return (
     <div className="space-y-6">
@@ -127,10 +40,13 @@ export default function ViewProduct({ loaderData }: Route.ComponentProps) {
         </Button>
         {isAdmin && (
           <div className="flex gap-2">
-            <Button onClick={openAdjustmentDialog} variant="outline">
+            <Button onClick={() => setIsAdjustingStock(true)} variant="outline">
               <Wrench /> Adjust stock
             </Button>
-            <Button render={<Link to={`/products/edit/${product.id}`} />}>
+            <Button
+              nativeButton={false}
+              render={<Link to={`/products/edit/${product.id}`} />}
+            >
               <Pencil /> Edit product
             </Button>
           </div>
@@ -260,56 +176,12 @@ export default function ViewProduct({ loaderData }: Route.ComponentProps) {
         )}
       </div>
 
-      <Dialog open={isAdjustingStock} onOpenChange={closeAdjustmentDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Adjust stock</DialogTitle>
-            <DialogDescription>
-              Current stock: {formatNumber(product.stock)}. Use a positive
-              number to add stock or a negative number to remove it.
-            </DialogDescription>
-          </DialogHeader>
-          <form className="space-y-4" onSubmit={submitAdjustment}>
-            <Field>
-              <FieldLabel htmlFor="stock-adjustment">
-                Stock adjustment
-              </FieldLabel>
-              <Input
-                autoFocus
-                id="stock-adjustment"
-                onChange={(event) => setQuantity(event.target.value)}
-                placeholder="e.g. 25 or -5"
-                step="1"
-                type="number"
-                value={quantity}
-              />
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="stock-adjustment-reason">Reason</FieldLabel>
-              <Textarea
-                id="stock-adjustment-reason"
-                onChange={(event) => setReason(event.target.value)}
-                placeholder="Optional note"
-                value={reason}
-              />
-            </Field>
-            {validationError && <FieldError>{validationError}</FieldError>}
-            <DialogFooter>
-              <Button
-                disabled={adjustmentMutation.isPending}
-                onClick={() => closeAdjustmentDialog(false)}
-                type="button"
-                variant="outline"
-              >
-                Cancel
-              </Button>
-              <Button disabled={adjustmentMutation.isPending} type="submit">
-                {adjustmentMutation.isPending ? "Adjusting..." : "Adjust"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <StockAdjustmentDialog
+        open={isAdjustingStock}
+        product={product}
+        onOpenChange={setIsAdjustingStock}
+        onSuccess={setProduct}
+      />
     </div>
   );
 }

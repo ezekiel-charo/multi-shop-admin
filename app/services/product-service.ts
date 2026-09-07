@@ -53,6 +53,9 @@ export async function adjustProductStock(
   product: Product,
   adjustment: InventoryAdjustment,
 ): Promise<Product> {
-  await api.post("adjustments", adjustment);
-  return await updateProduct(product.id, product);
+  const { shop, adjustments, ...cleanProduct } = product;
+  const _adjustment = (await api.post("adjustments", adjustment)).data;
+  product.adjustments?.push(_adjustment);
+  const _product = await updateProduct(product.id, cleanProduct);
+  return { ..._product, shop, adjustments };
 }
