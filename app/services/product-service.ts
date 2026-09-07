@@ -1,7 +1,7 @@
 import api from "~/lib/axios";
 import { mapProductWithDerivedFields } from "~/lib/product-data-utils";
 import type { Page } from "~/types/page";
-import type { Product } from "~/types/product";
+import type { InventoryAdjustment, Product } from "~/types/product";
 
 export async function getProducts(
   params: URLSearchParams,
@@ -19,7 +19,8 @@ export async function getProductsBySku(sku: string): Promise<Product[]> {
 }
 
 export async function getProduct(productId: string): Promise<Product> {
-  const response = await api.get(`products/${productId}`);
+  const params = new URLSearchParams("?_embed=shop&_embed=adjustments");
+  const response = await api.get(`products/${productId}`, { params });
   return mapProductWithDerivedFields(response.data);
 }
 
@@ -46,4 +47,12 @@ export async function updateProduct(
 export async function deleteProduct(productId: string): Promise<Product> {
   const response = await api.delete(`products/${productId}`);
   return response.data;
+}
+
+export async function adjustProductStock(
+  product: Product,
+  adjustment: InventoryAdjustment,
+): Promise<Product> {
+  await api.post("adjustments", adjustment);
+  return await updateProduct(product.id, product);
 }

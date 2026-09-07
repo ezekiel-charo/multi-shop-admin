@@ -277,7 +277,9 @@ export default function Products() {
                       />
                       <div>
                         <div className="font-semibold text-black mb-1">
-                          {product.productName}
+                          <Link to={`view/${product.id}`}>
+                            {product.productName}
+                          </Link>
                           <StatusBadge status={product.status} />
                         </div>
                         <div className="text-xs">SKU: {product.sku}</div>
