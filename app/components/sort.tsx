@@ -1,11 +1,7 @@
 import { ChevronsUpDown, SortAsc, SortDesc } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import {
-  SORT_DIRECTION,
-  type SortDirection,
-  type SortParams,
-} from "~/types/sort-params";
+import { type SortOptions } from "~/types/sort-options";
 import { ButtonGroup } from "./ui/button-group";
 import {
   Select,
@@ -17,33 +13,31 @@ import {
 } from "./ui/select";
 
 interface SortProps {
-  items: { label: string; value: string }[];
+  items: SortOptions[];
   defaultSort: string;
   onSort: (sort: string) => void;
 }
 
 export default function Sort({ items, defaultSort, onSort }: SortProps) {
-  const [sortValue, setSortValue] = useState<SortParams>(() => {
-    return {
-      direction: defaultSort.charAt(0) as SortDirection,
-      sortBy: defaultSort.substring(1),
-    };
-  });
+  const [sortValue, setSortValue] = useState<string | null>(() =>
+    defaultSort.substring(1),
+  );
+  const [isDescending, setIsDescending] = useState(
+    () => defaultSort.charAt(0) === "-",
+  );
 
-  function formatSort({ direction, sortBy }: SortParams) {
-    return `${direction}${sortBy}`;
+  function applySort(sortBy: string | null, descending: boolean) {
+    onSort(`${descending ? "-" : ""}${sortBy}`);
   }
 
   return (
     <>
       <ButtonGroup>
         <Select
-          items={items}
-          value={sortValue.sortBy}
-          onValueChange={(v) => {
-            const value = { ...sortValue, sortBy: v as string };
+          value={sortValue}
+          onValueChange={(value) => {
             setSortValue(value);
-            onSort(formatSort(value));
+            applySort(value, isDescending);
           }}
         >
           <SelectTrigger
@@ -66,23 +60,12 @@ export default function Sort({ items, defaultSort, onSort }: SortProps) {
         </Select>
         <Button
           onClick={() => {
-            const value = {
-              ...sortValue,
-              direction:
-                sortValue.direction === SORT_DIRECTION.ASC
-                  ? SORT_DIRECTION.DESC
-                  : SORT_DIRECTION.ASC,
-            };
-            setSortValue(value);
-            onSort(formatSort(value));
+            setIsDescending(!isDescending);
+            applySort(sortValue, !isDescending);
           }}
           variant="outline"
         >
-          {sortValue.direction === SORT_DIRECTION.ASC ? (
-            <SortAsc />
-          ) : (
-            <SortDesc />
-          )}
+          {isDescending ? <SortAsc /> : <SortDesc />}
         </Button>
       </ButtonGroup>
     </>
