@@ -6,6 +6,7 @@ import * as z from "zod";
 
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
+import Image from "~/components/image";
 import { Button } from "~/components/ui/button";
 import {
   Field,
@@ -69,8 +70,7 @@ const createProductFormSchema = (productId?: string) =>
             path: ["sku"],
           });
         }
-      } catch(e) {
-        console.log(e);
+      } catch {
         context.addIssue({
           code: "custom",
           message: "Unable to verify SKU. Please try again.",
@@ -157,13 +157,21 @@ export default function AddProduct({
 
   return (
     <>
-      <Button onClick={() => navigate("/products")} variant="outline">
-        <ArrowLeft />
-        Back
-      </Button>
-
-      <div className="font-bold text-lg my-4">
-        {isEditing ? "Edit Product" : "Add a Product"}
+      <div className="flex items-center justify-between max-w-3xl">
+        <div>
+          <Button onClick={() => navigate("/products")} variant="outline">
+            <ArrowLeft />
+            Back
+          </Button>
+          <div className="font-bold text-lg my-4">
+            {isEditing ? "Edit Product" : "Add a Product"}
+          </div>
+        </div>
+        <Image
+          className="size-18 rounded-xl"
+          src={form.watch("productImageUrl")}
+          alt="Product preview"
+        />
       </div>
 
       <form
