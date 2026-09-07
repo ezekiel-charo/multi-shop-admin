@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { ArrowLeft, Pencil, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Pencil, Wrench } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import Image from "~/components/image";
@@ -66,10 +66,7 @@ export default function ViewProduct({ loaderData }: Route.ComponentProps) {
       };
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { shop, adjustments: inventoryAdjustments, ...cleanProduct } = product;
-
-      console.log(cleanProduct);
-      console.log(adjustment);
+      const { shop, adjustments, ...cleanProduct } = product;
 
       return adjustProductStock(
         { ...cleanProduct, stock: newStock } as Product,
@@ -131,7 +128,7 @@ export default function ViewProduct({ loaderData }: Route.ComponentProps) {
         {isAdmin && (
           <div className="flex gap-2">
             <Button onClick={openAdjustmentDialog} variant="outline">
-              <SlidersHorizontal /> Adjust stock
+              <Wrench /> Adjust stock
             </Button>
             <Button render={<Link to={`/products/edit/${product.id}`} />}>
               <Pencil /> Edit product

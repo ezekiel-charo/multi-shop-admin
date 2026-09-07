@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
-import { EllipsisVertical } from "lucide-react";
+import { EllipsisVertical, Plus } from "lucide-react";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { ConfirmationDialog } from "~/components/confirmation-dialog";
@@ -152,7 +152,9 @@ export default function Shops() {
           />
           {isAdmin && (
             <Link to="add">
-              <Button>Add Shop</Button>
+              <Button>
+                <Plus /> Add Shop
+              </Button>
             </Link>
           )}
         </div>
